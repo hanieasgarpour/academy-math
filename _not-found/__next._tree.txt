@@ -1,0 +1,2 @@
+:HL["/academy-math/_next/static/chunks/1a87bfe22382faad.css","style"]
+0:{"buildId":"a8rd7Ru__ETxliEH7cjiM","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"/_not-found","paramType":null,"paramKey":"/_not-found","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}

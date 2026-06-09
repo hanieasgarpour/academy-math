@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
+const isDeploy = process.env.DEPLOY === "1";
+
 const nextConfig: NextConfig = {
-  output: "export",
-  basePath: "/academy-math",
+  ...(isDeploy && { output: "export", basePath: "/academy-math" }),
   images: {
     unoptimized: true,
   },
