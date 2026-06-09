@@ -64,19 +64,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
+// Sheet removed - using custom mobile menu for RTL compatibility
 import {
   useAppStore,
   type PageView,
   type CartItem,
+  type PurchasedItem,
 } from "@/store/use-store";
+import { useToast } from "@/hooks/use-toast";
 
 // --- Data ---
 const ACADEMY_NAME = "آکادمی ریاضی عرفان";
@@ -402,7 +397,33 @@ function formatPrice(num: number): string {
 function Navbar() {
   const { currentPage, setCurrentPage, user, logout, cart, setShowLoginModal } =
     useAppStore();
+  const { toast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "خروج موفق",
+      description: "با موفقیت خارج شدید",
+    });
+  };
+
+  const handleNavClick = (page: PageView) => {
+    setCurrentPage(page);
+    setMobileOpen(false);
+  };
 
   return (
     <motion.nav
@@ -466,9 +487,12 @@ function Navbar() {
               >
                 <User className="h-4 w-4" />
                 {user.name}
+                {user.role === "admin" && (
+                  <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 mr-1">ادمین</Badge>
+                )}
               </button>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="rounded-md p-2 text-orange-700 hover:bg-orange-50"
                 title="خروج"
               >
@@ -486,73 +510,104 @@ function Navbar() {
             </Button>
           )}
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu Button */}
           <div className="lg:hidden">
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-orange-700"
-                >
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-72">
-                <SheetHeader>
-                  <SheetTitle className="flex items-center gap-2 text-orange-800">
-                    <Calculator className="h-5 w-5" />
-                    {ACADEMY_NAME}
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-1 px-4 pt-4">
-                  {navLinks.map((link) => (
-                    <SheetClose key={link.href} asChild>
-                      <button
-                        onClick={() => setCurrentPage(link.href as PageView)}
-                        className={`flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition-colors ${
-                          currentPage === link.href
-                            ? "bg-orange-100 text-orange-900"
-                            : "text-orange-700 hover:bg-orange-50"
-                        }`}
-                      >
-                        <link.icon className="h-5 w-5" />
-                        {link.label}
-                      </button>
-                    </SheetClose>
-                  ))}
-                  <Separator className="my-2" />
-                  <SheetClose asChild>
-                    <button
-                      onClick={() => setCurrentPage("cart")}
-                      className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
-                    >
-                      <ShoppingCart className="h-5 w-5" />
-                      سبد خرید
-                      {cart.length > 0 && (
-                        <Badge className="bg-red-500 text-white mr-auto">
-                          {cart.length}
-                        </Badge>
-                      )}
-                    </button>
-                  </SheetClose>
-                  {user && (
-                    <SheetClose asChild>
-                      <button
-                        onClick={() => setCurrentPage("profile")}
-                        className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
-                      >
-                        <User className="h-5 w-5" />
-                        پروفایل ({user.name})
-                      </button>
-                    </SheetClose>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-orange-700"
+              onClick={() => setMobileOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Custom Mobile Menu - RTL Friendly */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[60] bg-black/50"
+              onClick={() => setMobileOpen(false)}
+            />
+            {/* Drawer Panel - slides from right in RTL */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed top-0 right-0 z-[70] h-full w-72 bg-white shadow-2xl"
+              dir="rtl"
+            >
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between p-4 border-b border-orange-100">
+                <div className="flex items-center gap-2 text-orange-800 font-bold">
+                  <Calculator className="h-5 w-5" />
+                  {ACADEMY_NAME}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-orange-700 hover:bg-orange-50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Drawer Content */}
+              <div className="flex flex-col gap-1 p-4 overflow-y-auto max-h-[calc(100vh-64px)]">
+                {navLinks.map((link) => (
+                  <button
+                    key={link.href}
+                    onClick={() => handleNavClick(link.href as PageView)}
+                    className={`flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                      currentPage === link.href
+                        ? "bg-orange-100 text-orange-900"
+                        : "text-orange-700 hover:bg-orange-50"
+                    }`}
+                  >
+                    <link.icon className="h-5 w-5" />
+                    {link.label}
+                  </button>
+                ))}
+                <Separator className="my-2" />
+                <button
+                  onClick={() => handleNavClick("cart")}
+                  className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  سبد خرید
+                  {cart.length > 0 && (
+                    <Badge className="bg-red-500 text-white mr-auto">
+                      {cart.length}
+                    </Badge>
+                  )}
+                </button>
+                {user && (
+                  <button
+                    onClick={() => handleNavClick("profile")}
+                    className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
+                  >
+                    <User className="h-5 w-5" />
+                    <span>پروفایل ({user.name})</span>
+                    {user.role === "admin" && (
+                      <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 mr-auto">ادمین</Badge>
+                    )}
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
@@ -561,6 +616,7 @@ function Navbar() {
 function LoginModal() {
   const { showLoginModal, setShowLoginModal, login, setPendingAction } =
     useAppStore();
+  const { toast } = useToast();
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -572,13 +628,42 @@ function LoginModal() {
     if (isRegister && (!name || !email || !phone || !password)) return;
     if (!isRegister && (!email || !password)) return;
 
+    // Check for admin login
+    if (!isRegister && email === "admin@erfan.ir" && password === "admin123") {
+      const adminUser = {
+        id: "admin-1",
+        name: "مدیر آکادمی",
+        email: "admin@erfan.ir",
+        phone: "09123456789",
+        role: "admin" as const,
+      };
+      login(adminUser);
+      toast({
+        title: "ورود موفق",
+        description: "به عنوان مدیر وارد شدید",
+      });
+      setName("");
+      setEmail("");
+      setPhone("");
+      setPassword("");
+      setPendingAction(null);
+      return;
+    }
+
     const user = {
       id: Date.now().toString(),
       name: name || email.split("@")[0],
       email,
       phone: phone || "",
+      role: "user" as const,
     };
     login(user);
+    toast({
+      title: isRegister ? "ثبت‌نام موفق" : "ورود موفق",
+      description: isRegister
+        ? "حساب کاربری شما با موفقیت ایجاد شد"
+        : "با موفقیت وارد حساب کاربری خود شدید",
+    });
     setName("");
     setEmail("");
     setPhone("");
@@ -883,6 +968,7 @@ function FeaturesSection() {
 function ClassesPage() {
   const { user, setShowLoginModal, addToCart, setPendingAction, purchases } =
     useAppStore();
+  const { toast } = useToast();
   const [selectedTerm, setSelectedTerm] = useState<string>("summer");
 
   const handlePurchaseClass = (cls: (typeof classes)[0], paymentType: "monthly" | "term") => {
@@ -908,6 +994,10 @@ function ClassesPage() {
       term: term?.name,
     };
     addToCart(cartItem);
+    toast({
+      title: "اضافه شد به سبد خرید",
+      description: `${cartItem.name} به سبد خرید اضافه شد`,
+    });
   };
 
   const isPurchased = (classId: string) => {
@@ -1104,6 +1194,7 @@ function ClassesPage() {
 // --- Products Page ---
 function ProductsPage() {
   const { user, setShowLoginModal, addToCart } = useAppStore();
+  const { toast } = useToast();
 
   const handleAddToCart = (item: CartItem) => {
     if (!user) {
@@ -1111,6 +1202,10 @@ function ProductsPage() {
       return;
     }
     addToCart(item);
+    toast({
+      title: "اضافه شد به سبد خرید",
+      description: `${item.name} به سبد خرید اضافه شد`,
+    });
   };
 
   return (
@@ -1376,6 +1471,7 @@ function FreeVideosPage() {
 // --- Booklets Page ---
 function BookletsPage() {
   const { user, setShowLoginModal, addToCart } = useAppStore();
+  const { toast } = useToast();
   const [selectedGrade, setSelectedGrade] = useState<string>("all");
 
   const filteredBooklets =
@@ -1389,6 +1485,10 @@ function BookletsPage() {
       return;
     }
     addToCart(item);
+    toast({
+      title: "اضافه شد به سبد خرید",
+      description: `${item.name} به سبد خرید اضافه شد`,
+    });
   };
 
   return (
@@ -1516,8 +1616,10 @@ function BookletsPage() {
 
 // --- Cart Page ---
 function CartPage() {
-  const { cart, removeFromCart, clearCart, user, setShowLoginModal } =
+  const { cart, removeFromCart, clearCart, user, setShowLoginModal, addPurchase } =
     useAppStore();
+  const { toast } = useToast();
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const total = cart.reduce((sum, item) => sum + item.price, 0);
 
@@ -1536,15 +1638,60 @@ function CartPage() {
     }
   };
 
+  const handleRemoveFromCart = (id: string, name: string) => {
+    removeFromCart(id);
+    toast({
+      title: "حذف شد",
+      description: `${name} از سبد خرید حذف شد`,
+    });
+  };
+
   const handleCheckout = () => {
     if (!user) {
       setShowLoginModal(true);
       return;
     }
-    // In a real app, this would redirect to a payment gateway
-    alert(
-      "در حال انتقال به درگاه پرداخت...\n(این بخش پس از اتصال درگاه پرداخت واقعی فعال می‌شود)"
-    );
+
+    // Create purchased items from cart
+    const now = new Date().toLocaleDateString("fa-IR");
+    cart.forEach((item) => {
+      let purchaseType: "class" | "video_package" | "booklet";
+      let skyroomUrl: string | undefined;
+      let downloadUrl: string | undefined;
+
+      if (item.type === "class_monthly" || item.type === "class_term") {
+        purchaseType = "class";
+        // Find the matching class to get skyroomUrl
+        const matchingClass = classes.find((cls) => item.id.startsWith(cls.id));
+        skyroomUrl = matchingClass?.skyroomUrl;
+      } else if (item.type === "video_package") {
+        purchaseType = "video_package";
+        downloadUrl = `https://academy-math.ir/download/${item.id}`;
+      } else {
+        purchaseType = "booklet";
+        downloadUrl = `https://academy-math.ir/download/${item.id}`;
+      }
+
+      const purchase: PurchasedItem = {
+        id: `purchase-${item.id}`,
+        name: item.name,
+        type: purchaseType,
+        purchasedAt: now,
+        ...(skyroomUrl && { skyroomUrl }),
+        ...(downloadUrl && { downloadUrl }),
+      };
+      addPurchase(purchase);
+    });
+
+    // Clear cart after successful checkout
+    clearCart();
+
+    // Show success toast and dialog
+    toast({
+      title: "خرید موفق",
+      description: "خرید شما با موفقیت انجام شد. از پروفایل می‌توانید به محصول دسترسی داشته باشید.",
+    });
+    setShowSuccessDialog(true);
   };
 
   if (cart.length === 0) {
@@ -1565,6 +1712,39 @@ function CartPage() {
             مشاهده کلاس‌ها
           </Button>
         </div>
+
+        {/* Success Dialog */}
+        <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <DialogContent className="sm:max-w-md" dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-orange-800 flex items-center gap-2">
+                <CheckCircle className="h-6 w-6 text-green-600" />
+                خرید با موفقیت انجام شد
+              </DialogTitle>
+              <DialogDescription>
+                خرید شما با موفقیت تکمیل شد. از بخش پروفایل می‌توانید به کلاس‌ها و محصولات خریداری شده دسترسی داشته باشید.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 mt-4">
+              <Button
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  useAppStore.getState().setCurrentPage("profile");
+                }}
+                className="flex-1 bg-orange-600 text-white hover:bg-orange-700"
+              >
+                مشاهده خریدها
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowSuccessDialog(false)}
+                className="flex-1 border-orange-200 text-orange-700"
+              >
+                بستن
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </section>
     );
   }
@@ -1627,7 +1807,7 @@ function CartPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => handleRemoveFromCart(item.id, item.name)}
                   className="text-red-500 hover:bg-red-50 hover:text-red-600"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -1671,6 +1851,39 @@ function CartPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="sm:max-w-md" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-orange-800 flex items-center gap-2">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+              خرید با موفقیت انجام شد
+            </DialogTitle>
+            <DialogDescription>
+              خرید شما با موفقیت تکمیل شد. از بخش پروفایل می‌توانید به کلاس‌ها و محصولات خریداری شده دسترسی داشته باشید.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 mt-4">
+            <Button
+              onClick={() => {
+                setShowSuccessDialog(false);
+                useAppStore.getState().setCurrentPage("profile");
+              }}
+              className="flex-1 bg-orange-600 text-white hover:bg-orange-700"
+            >
+              مشاهده خریدها
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowSuccessDialog(false)}
+              className="flex-1 border-orange-200 text-orange-700"
+            >
+              بستن
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
@@ -2071,6 +2284,7 @@ function ContactSection() {
 // --- Profile Page ---
 function ProfilePage() {
   const { user, purchases, logout, setCurrentPage } = useAppStore();
+  const { toast } = useToast();
 
   if (!user) {
     return (
@@ -2084,6 +2298,14 @@ function ProfilePage() {
       </section>
     );
   }
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "خروج موفق",
+      description: "با موفقیت خارج شدید",
+    });
+  };
 
   return (
     <section className="py-20 bg-white">
@@ -2103,7 +2325,14 @@ function ProfilePage() {
                   <User className="h-8 w-8" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold">{user.name}</h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-2xl font-bold">{user.name}</h2>
+                    {user.role === "admin" && (
+                      <Badge className="bg-amber-400 text-amber-900 border-0 text-xs px-2 py-0.5 font-bold">
+                        ادمین
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-orange-200" dir="ltr">
                     {user.email}
                   </p>
@@ -2118,7 +2347,7 @@ function ProfilePage() {
             <CardContent className="pt-6">
               <Button
                 variant="outline"
-                onClick={logout}
+                onClick={handleLogout}
                 className="border-red-200 text-red-600 hover:bg-red-50 gap-2"
               >
                 <LogOut className="h-4 w-4" />

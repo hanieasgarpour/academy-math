@@ -1,31 +1,38 @@
 ---
 Task ID: 1
-Agent: Main Agent
-Task: Build complete Erfan Math Academy website with all requested features
+Agent: full-stack-developer
+Task: Fix hamburger menu, add admin user, add toast notifications, improve checkout
 
 Work Log:
-- Analyzed user requirements for major site overhaul
-- Searched for teacher resume (محمد حسن آقایی‌زاده) online - found confirmed info on Kelass Kanoon profile
-- Updated next.config.ts to remove static export constraints for development
-- Created Zustand store (use-store.ts) for client-side state management (auth, cart, navigation, purchases)
-- Rewrote page.tsx with all new features:
-  - Navigation system with page switching (home, classes, products, free-videos, booklets, about, cart, profile)
-  - Login/Register modal with localStorage persistence
-  - Classes page with monthly/term purchase options and term selection (summer/winter)
-  - Products page with video packages (6th grade: 1,500,000 Toman, 9th grade: 1,800,000 Toman)
-  - Free YouTube videos page
-  - Booklets page with grade filtering and add-to-cart
-  - Shopping cart with checkout flow
-  - About page with detailed teacher info for آقایی‌زاده and باوفا
-  - Profile page with purchase history
-  - Academy name changed to "آکادمی ریاضی عرفان"
-  - Term system: Summer (20 Tir - 20 Shahrivar), Winter (18 Mehr - 20 Ordibehesht)
-- Updated layout.tsx with new academy name and metadata
-- Fixed nested button hydration error in ScrollToTop component
-- Verified all pages render correctly with agent-browser
+- Added `role?: "admin" | "user"` field to User interface in `/home/z/my-project/src/store/use-store.ts`
+- Replaced Sheet-based mobile menu with custom RTL-friendly drawer using Framer Motion AnimatePresence and CSS transitions
+- Custom drawer slides from right (correct for RTL), uses overlay click-to-close, body scroll lock, and proper z-index layering
+- Added admin login support: `admin@erfan.ir` / `admin123` creates user with role "admin" and name "مدیر آکادمی"
+- Added admin badge ("ادمین") in Navbar (desktop), mobile menu drawer, and ProfilePage header
+- Added toast notifications using existing `useToast` hook for:
+  - Adding item to cart (سبد خرید اضافه شد)
+  - Removing item from cart (از سبد خرید حذف شد)
+  - Login success (ورود موفق)
+  - Registration success (ثبت‌نام موفق)
+  - Logout success (خروج موفق)
+  - Checkout success (خرید موفق)
+- Improved cart checkout flow:
+  - Converts all cart items to proper PurchasedItem records with correct types
+  - Class items include skyroomUrl from the classes data
+  - Video package items include a downloadUrl
+  - Booklet items include a downloadUrl
+  - Shows success toast after checkout
+  - Shows success Dialog with options to view purchases or close
+  - Clears cart after successful checkout
+- Removed Sheet component imports (no longer needed)
+- Added PurchasedItem import from store
+- Added useToast import from hooks
+- Lint check passes with no errors
+- Server compiles successfully and returns 200
 
 Stage Summary:
-- Full SPA built with all 7 requested features
-- Site renders correctly with no console errors
-- All navigation, auth modal, cart functionality working
-- Ready for deployment to GitHub Pages
+- Hamburger menu now uses custom RTL-friendly drawer instead of broken Sheet component
+- Admin account (admin@erfan.ir / admin123) works with role badge display
+- Toast notifications provide visual feedback for all key user actions
+- Checkout flow properly creates purchase records with correct URLs and shows success dialog
+- All changes preserve existing orange theme, data, and layout
