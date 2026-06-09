@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useId } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calculator,
@@ -426,6 +427,7 @@ function Navbar() {
   };
 
   return (
+    <>
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -523,92 +525,110 @@ function Navbar() {
           </div>
         </div>
       </div>
+    </motion.nav>
+    <MobileMenu mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+    </>
+  );
+}
 
-      {/* Custom Mobile Menu - RTL Friendly */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            {/* Overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[60] bg-black/50"
-              onClick={() => setMobileOpen(false)}
-            />
-            {/* Drawer Panel - slides from right in RTL */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 z-[70] h-full w-72 bg-white shadow-2xl"
-              dir="rtl"
-            >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between p-4 border-b border-orange-100">
-                <div className="flex items-center gap-2 text-orange-800 font-bold">
-                  <Calculator className="h-5 w-5" />
-                  {ACADEMY_NAME}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-orange-700 hover:bg-orange-50"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <X className="h-5 w-5" />
-                </Button>
+// --- Mobile Menu Portal (renders outside nav to avoid transform stacking context issues) ---
+function MobileMenu({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; setMobileOpen: (v: boolean) => void }) {
+  const { currentPage, setCurrentPage, user, cart } = useAppStore();
+
+  const handleNavClick = (page: PageView) => {
+    setCurrentPage(page);
+    setMobileOpen(false);
+  };
+
+  if (typeof window === "undefined") return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {mobileOpen && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            key="mobile-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[9998] bg-black/50"
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Drawer Panel - slides from right in RTL */}
+          <motion.div
+            key="mobile-drawer"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed top-0 right-0 z-[9999] h-full w-72 bg-white shadow-2xl"
+            dir="rtl"
+          >
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between p-4 border-b border-orange-100">
+              <div className="flex items-center gap-2 text-orange-800 font-bold">
+                <Calculator className="h-5 w-5" />
+                {ACADEMY_NAME}
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-orange-700 hover:bg-orange-50"
+                onClick={() => setMobileOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
 
-              {/* Drawer Content */}
-              <div className="flex flex-col gap-1 p-4 overflow-y-auto max-h-[calc(100vh-64px)]">
-                {navLinks.map((link) => (
-                  <button
-                    key={link.href}
-                    onClick={() => handleNavClick(link.href as PageView)}
-                    className={`flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition-colors ${
-                      currentPage === link.href
-                        ? "bg-orange-100 text-orange-900"
-                        : "text-orange-700 hover:bg-orange-50"
-                    }`}
-                  >
-                    <link.icon className="h-5 w-5" />
-                    {link.label}
-                  </button>
-                ))}
-                <Separator className="my-2" />
+            {/* Drawer Content */}
+            <div className="flex flex-col gap-1 p-4 overflow-y-auto max-h-[calc(100vh-64px)]">
+              {navLinks.map((link) => (
                 <button
-                  onClick={() => handleNavClick("cart")}
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href as PageView)}
+                  className={`flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                    currentPage === link.href
+                      ? "bg-orange-100 text-orange-900"
+                      : "text-orange-700 hover:bg-orange-50"
+                  }`}
+                >
+                  <link.icon className="h-5 w-5" />
+                  {link.label}
+                </button>
+              ))}
+              <Separator className="my-2" />
+              <button
+                onClick={() => handleNavClick("cart")}
+                className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                سبد خرید
+                {cart.length > 0 && (
+                  <Badge className="bg-red-500 text-white mr-auto">
+                    {cart.length}
+                  </Badge>
+                )}
+              </button>
+              {user && (
+                <button
+                  onClick={() => handleNavClick("profile")}
                   className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
                 >
-                  <ShoppingCart className="h-5 w-5" />
-                  سبد خرید
-                  {cart.length > 0 && (
-                    <Badge className="bg-red-500 text-white mr-auto">
-                      {cart.length}
-                    </Badge>
+                  <User className="h-5 w-5" />
+                  <span>پروفایل ({user.name})</span>
+                  {user.role === "admin" && (
+                    <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 mr-auto">ادمین</Badge>
                   )}
                 </button>
-                {user && (
-                  <button
-                    onClick={() => handleNavClick("profile")}
-                    className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
-                  >
-                    <User className="h-5 w-5" />
-                    <span>پروفایل ({user.name})</span>
-                    {user.role === "admin" && (
-                      <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 mr-auto">ادمین</Badge>
-                    )}
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+              )}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>,
+    document.body
   );
 }
 
@@ -1718,7 +1738,7 @@ function CartPage() {
           <DialogContent className="sm:max-w-md" dir="rtl">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold text-orange-800 flex items-center gap-2">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+                <CheckCircle className="h-6 w-6 text-orange-600" />
                 خرید با موفقیت انجام شد
               </DialogTitle>
               <DialogDescription>
@@ -1857,7 +1877,7 @@ function CartPage() {
         <DialogContent className="sm:max-w-md" dir="rtl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-orange-800 flex items-center gap-2">
-              <CheckCircle className="h-6 w-6 text-green-600" />
+              <CheckCircle className="h-6 w-6 text-orange-600" />
               خرید با موفقیت انجام شد
             </DialogTitle>
             <DialogDescription>
