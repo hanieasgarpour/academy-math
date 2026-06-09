@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+enum PaymentGateway {
+  ZARINPAL
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String
+  phone        String?
+  password     String
+  role         Role         @default(STUDENT)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  orders       Order[]
+  enrollments  Enrollment[]
+}
+
+model Course {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  price       Int
+  level       CourseLevel
+  thumbnail   String?
+  duration    String?
+  published   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  orders      Order[]
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  videoUrl  String?
+  order     Int      @default(0)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  files     File[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  fileType  String
+  fileSize  Int
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model Order {
+  id          String        @id @default(cuid())
+  userId      String
+  courseId    String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  amount      Int
+  status      OrderStatus   @default(PENDING)
+  gateway     PaymentGateway @default(ZARINPAL)
+  payment     Payment?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String        @unique
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  authority   String?
+  refId       String?
+  gateway     PaymentGateway @default(ZARINPAL)
+  status      PaymentStatus  @default(PENDING)
+  cardPan     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
