@@ -409,7 +409,7 @@ function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="sticky top-0 z-50 w-full border-b border-emerald-200/50 bg-white/80 backdrop-blur-md"
+      className="sticky top-0 z-50 w-full border-b border-orange-200/50 bg-white/80 backdrop-blur-md"
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
@@ -417,10 +417,10 @@ function Navbar() {
           onClick={() => setCurrentPage("home")}
           className="flex items-center gap-2"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-white">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-600 text-white">
             <Calculator className="h-5 w-5" />
           </div>
-          <span className="text-lg font-bold text-emerald-800 sm:text-xl">
+          <span className="text-lg font-bold text-orange-800 sm:text-xl">
             {ACADEMY_NAME}
           </span>
         </button>
@@ -433,8 +433,8 @@ function Navbar() {
               onClick={() => setCurrentPage(link.href as PageView)}
               className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 currentPage === link.href
-                  ? "bg-emerald-100 text-emerald-900"
-                  : "text-emerald-700 hover:bg-emerald-50 hover:text-emerald-900"
+                  ? "bg-orange-100 text-orange-900"
+                  : "text-orange-700 hover:bg-orange-50 hover:text-orange-900"
               }`}
             >
               {link.label}
@@ -447,7 +447,7 @@ function Navbar() {
           {/* Cart */}
           <button
             onClick={() => setCurrentPage("cart")}
-            className="relative rounded-md p-2 text-emerald-700 hover:bg-emerald-50"
+            className="relative rounded-md p-2 text-orange-700 hover:bg-orange-50"
           >
             <ShoppingCart className="h-5 w-5" />
             {cart.length > 0 && (
@@ -462,14 +462,14 @@ function Navbar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage("profile")}
-                className="hidden items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 sm:flex"
+                className="hidden items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-orange-700 hover:bg-orange-50 sm:flex"
               >
                 <User className="h-4 w-4" />
                 {user.name}
               </button>
               <button
                 onClick={logout}
-                className="rounded-md p-2 text-emerald-700 hover:bg-emerald-50"
+                className="rounded-md p-2 text-orange-700 hover:bg-orange-50"
                 title="خروج"
               >
                 <LogOut className="h-4 w-4" />
@@ -478,7 +478,7 @@ function Navbar() {
           ) : (
             <Button
               onClick={() => setShowLoginModal(true)}
-              className="bg-emerald-600 text-white hover:bg-emerald-700 gap-1"
+              className="bg-orange-600 text-white hover:bg-orange-700 gap-1"
               size="sm"
             >
               <LogIn className="h-4 w-4" />
@@ -493,14 +493,14 @@ function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-emerald-700"
+                  className="text-orange-700"
                 >
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72">
                 <SheetHeader>
-                  <SheetTitle className="flex items-center gap-2 text-emerald-800">
+                  <SheetTitle className="flex items-center gap-2 text-orange-800">
                     <Calculator className="h-5 w-5" />
                     {ACADEMY_NAME}
                   </SheetTitle>
@@ -512,8 +512,8 @@ function Navbar() {
                         onClick={() => setCurrentPage(link.href as PageView)}
                         className={`flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition-colors ${
                           currentPage === link.href
-                            ? "bg-emerald-100 text-emerald-900"
-                            : "text-emerald-700 hover:bg-emerald-50"
+                            ? "bg-orange-100 text-orange-900"
+                            : "text-orange-700 hover:bg-orange-50"
                         }`}
                       >
                         <link.icon className="h-5 w-5" />
@@ -525,7 +525,7 @@ function Navbar() {
                   <SheetClose asChild>
                     <button
                       onClick={() => setCurrentPage("cart")}
-                      className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-emerald-700 hover:bg-emerald-50"
+                      className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
                     >
                       <ShoppingCart className="h-5 w-5" />
                       سبد خرید
@@ -540,7 +540,7 @@ function Navbar() {
                     <SheetClose asChild>
                       <button
                         onClick={() => setCurrentPage("profile")}
-                        className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-emerald-700 hover:bg-emerald-50"
+                        className="flex items-center gap-3 rounded-md px-3 py-3 text-base font-medium text-orange-700 hover:bg-orange-50"
                       >
                         <User className="h-5 w-5" />
                         پروفایل ({user.name})
@@ -592,7 +592,7 @@ function LoginModal() {
     <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
       <DialogContent className="sm:max-w-md" dir="rtl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-emerald-800">
+          <DialogTitle className="text-xl font-bold text-orange-800">
             {isRegister ? "ثبت‌نام" : "ورود"} به {ACADEMY_NAME}
           </DialogTitle>
           <DialogDescription>
@@ -604,7 +604,7 @@ function LoginModal() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
             <div className="space-y-2">
-              <Label htmlFor="reg-name" className="text-emerald-800">
+              <Label htmlFor="reg-name" className="text-orange-800">
                 نام و نام خانوادگی
               </Label>
               <Input
@@ -612,13 +612,13 @@ function LoginModal() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="نام خود را وارد کنید"
-                className="border-emerald-200 focus-visible:ring-emerald-500"
+                className="border-orange-200 focus-visible:ring-orange-500"
                 required
               />
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="auth-email" className="text-emerald-800">
+            <Label htmlFor="auth-email" className="text-orange-800">
               ایمیل
             </Label>
             <Input
@@ -627,14 +627,14 @@ function LoginModal() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@email.com"
-              className="border-emerald-200 focus-visible:ring-emerald-500"
+              className="border-orange-200 focus-visible:ring-orange-500"
               dir="ltr"
               required
             />
           </div>
           {isRegister && (
             <div className="space-y-2">
-              <Label htmlFor="reg-phone" className="text-emerald-800">
+              <Label htmlFor="reg-phone" className="text-orange-800">
                 شماره تلفن
               </Label>
               <Input
@@ -643,14 +643,14 @@ function LoginModal() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="۰۹۱۲۱۲۳۴۵۶۷"
-                className="border-emerald-200 focus-visible:ring-emerald-500"
+                className="border-orange-200 focus-visible:ring-orange-500"
                 dir="ltr"
                 required
               />
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="auth-password" className="text-emerald-800">
+            <Label htmlFor="auth-password" className="text-orange-800">
               رمز عبور
             </Label>
             <Input
@@ -659,14 +659,14 @@ function LoginModal() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="رمز عبور"
-              className="border-emerald-200 focus-visible:ring-emerald-500"
+              className="border-orange-200 focus-visible:ring-orange-500"
               dir="ltr"
               required
             />
           </div>
           <Button
             type="submit"
-            className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-5"
+            className="w-full bg-orange-600 text-white hover:bg-orange-700 py-5"
           >
             {isRegister ? (
               <>
@@ -684,7 +684,7 @@ function LoginModal() {
             <button
               type="button"
               onClick={() => setIsRegister(!isRegister)}
-              className="text-sm text-emerald-600 hover:text-emerald-800 hover:underline"
+              className="text-sm text-orange-600 hover:text-orange-800 hover:underline"
             >
               {isRegister
                 ? "حساب کاربری دارید؟ وارد شوید"
@@ -764,7 +764,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mx-auto mb-4 max-w-2xl text-lg text-emerald-100 sm:text-xl md:text-2xl"
+            className="mx-auto mb-4 max-w-2xl text-lg text-orange-100 sm:text-xl md:text-2xl"
           >
             یادگیری ریاضی به روشی نوین، آنلاین و تعاملی
           </motion.p>
@@ -773,7 +773,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="mx-auto mb-10 max-w-xl text-base text-emerald-200/80 sm:text-lg"
+            className="mx-auto mb-10 max-w-xl text-base text-orange-200/80 sm:text-lg"
           >
             کلاس‌های زنده و تعاملی با بهترین اساتید در پلتفرم SkyRoom
           </motion.p>
@@ -787,7 +787,7 @@ function HeroSection() {
             <Button
               onClick={() => setCurrentPage("classes")}
               size="lg"
-              className="bg-white text-emerald-700 hover:bg-emerald-50 px-8 py-6 text-lg font-bold shadow-lg shadow-emerald-900/20"
+              className="bg-white text-orange-700 hover:bg-orange-50 px-8 py-6 text-lg font-bold shadow-lg shadow-orange-900/20"
             >
               مشاهده کلاس‌ها
             </Button>
@@ -837,7 +837,7 @@ function FeaturesSection() {
           <Badge className="mb-4 bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100">
             ویژگی‌ها
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             چرا {ACADEMY_NAME}؟
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -858,12 +858,12 @@ function FeaturesSection() {
               variants={fadeInUp}
               transition={{ duration: 0.5 }}
             >
-              <Card className="card-hover h-full border-emerald-100 bg-white text-center">
+              <Card className="card-hover h-full border-orange-100 bg-white text-center">
                 <CardContent className="pt-8 pb-6 flex flex-col items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-100 text-orange-600">
                     <feature.icon className="h-8 w-8" />
                   </div>
-                  <h3 className="text-lg font-bold text-emerald-800">
+                  <h3 className="text-lg font-bold text-orange-800">
                     {feature.title}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
@@ -925,10 +925,10 @@ function ClassesPage() {
           transition={{ duration: 0.6 }}
           className="mb-10 text-center"
         >
-          <Badge className="mb-4 bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100">
+          <Badge className="mb-4 bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-100">
             کلاس‌ها
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             کلاس‌های آموزشی
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -938,7 +938,7 @@ function ClassesPage() {
 
         {/* Term Selection */}
         <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Label className="text-emerald-800 font-bold">انتخاب ترم:</Label>
+          <Label className="text-orange-800 font-bold">انتخاب ترم:</Label>
           <div className="flex gap-3">
             {terms.map((term) => (
               <button
@@ -946,8 +946,8 @@ function ClassesPage() {
                 onClick={() => setSelectedTerm(term.id)}
                 className={`rounded-xl px-6 py-3 text-sm font-bold transition-all ${
                   selectedTerm === term.id
-                    ? "bg-emerald-600 text-white shadow-lg"
-                    : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                    ? "bg-orange-600 text-white shadow-lg"
+                    : "bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200"
                 }`}
               >
                 {term.name}
@@ -973,13 +973,13 @@ function ClassesPage() {
               variants={fadeInUp}
               transition={{ duration: 0.5 }}
             >
-              <Card className="card-hover h-full border-emerald-100 bg-white">
+              <Card className="card-hover h-full border-orange-100 bg-white">
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <CardTitle className="text-xl font-bold text-emerald-800">
+                    <CardTitle className="text-xl font-bold text-orange-800">
                       {cls.name}
                     </CardTitle>
-                    <Badge className="bg-emerald-600 text-white hover:bg-emerald-700">
+                    <Badge className="bg-orange-600 text-white hover:bg-orange-700">
                       {cls.grade}
                     </Badge>
                   </div>
@@ -989,25 +989,25 @@ function ClassesPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <User className="h-4 w-4 text-emerald-600" />
+                    <User className="h-4 w-4 text-orange-600" />
                     <span>{cls.teacher}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 text-emerald-600" />
+                    <Clock className="h-4 w-4 text-orange-600" />
                     <span>{cls.schedule}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4 text-emerald-600" />
+                    <Calendar className="h-4 w-4 text-orange-600" />
                     <span>
                       {terms.find((t) => t.id === selectedTerm)?.period}
                     </span>
                   </div>
                   <Separator className="my-2" />
-                  <div className="text-center bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                  <div className="text-center bg-orange-50 rounded-lg p-3 border border-orange-100">
                     <p className="text-sm text-muted-foreground">
                       شهریه ماهیانه:
                     </p>
-                    <p className="text-lg font-bold text-emerald-700">
+                    <p className="text-lg font-bold text-orange-700">
                       {pricing[cls.pricing as "basic" | "advanced"].monthlyLabel}{" "}
                       تومان
                     </p>
@@ -1021,7 +1021,7 @@ function ClassesPage() {
                       rel="noopener noreferrer"
                       className="w-full"
                     >
-                      <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2">
+                      <Button className="w-full bg-orange-600 text-white hover:bg-orange-700 gap-2">
                         <ExternalLink className="h-4 w-4" />
                         ورود به کلاس
                       </Button>
@@ -1030,7 +1030,7 @@ function ClassesPage() {
                     <>
                       <Button
                         onClick={() => handlePurchaseClass(cls, "monthly")}
-                        className="w-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2"
+                        className="w-full bg-orange-600 text-white hover:bg-orange-700 gap-2"
                       >
                         <CreditCard className="h-4 w-4" />
                         خرید ماهیانه
@@ -1038,7 +1038,7 @@ function ClassesPage() {
                       <Button
                         onClick={() => handlePurchaseClass(cls, "term")}
                         variant="outline"
-                        className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 gap-2"
+                        className="w-full border-orange-300 text-orange-700 hover:bg-orange-50 gap-2"
                       >
                         <Calendar className="h-4 w-4" />
                         خرید ترمی
@@ -1114,7 +1114,7 @@ function ProductsPage() {
   };
 
   return (
-    <section className="py-20 bg-emerald-50/50">
+    <section className="py-20 bg-orange-50/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
@@ -1127,7 +1127,7 @@ function ProductsPage() {
           <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-100">
             محصولات
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             پکیج‌های ویدیویی آموزشی
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -1151,7 +1151,7 @@ function ProductsPage() {
             >
               <Card className="card-hover h-full border-purple-100 bg-white overflow-hidden">
                 {/* Header */}
-                <div className="bg-gradient-to-l from-purple-600 to-emerald-600 p-6 text-white">
+                <div className="bg-gradient-to-l from-purple-600 to-orange-600 p-6 text-white">
                   <div className="flex items-center justify-between mb-3">
                     <Badge className="bg-white/20 text-white border-white/30">
                       پایه {pkg.grade}
@@ -1174,10 +1174,10 @@ function ProductsPage() {
                         {pkg.lessons} درس
                       </p>
                     </div>
-                    <div className="bg-emerald-50 rounded-lg p-3 text-center">
-                      <Clock className="h-5 w-5 text-emerald-600 mx-auto mb-1" />
+                    <div className="bg-orange-50 rounded-lg p-3 text-center">
+                      <Clock className="h-5 w-5 text-orange-600 mx-auto mb-1" />
                       <p className="text-xs text-muted-foreground">مدت زمان</p>
-                      <p className="font-bold text-emerald-700">
+                      <p className="font-bold text-orange-700">
                         {pkg.hours} ساعت
                       </p>
                     </div>
@@ -1191,11 +1191,11 @@ function ProductsPage() {
                   </div>
 
                   {/* Price */}
-                  <div className="text-center bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                    <p className="text-3xl font-extrabold text-emerald-700">
+                  <div className="text-center bg-orange-50 rounded-xl p-4 border border-orange-100">
+                    <p className="text-3xl font-extrabold text-orange-700">
                       {pkg.priceLabel}
                     </p>
-                    <p className="text-sm text-emerald-600">تومان</p>
+                    <p className="text-sm text-orange-600">تومان</p>
                   </div>
                 </CardContent>
 
@@ -1275,7 +1275,7 @@ function FreeVideosPage() {
           <Badge className="mb-4 bg-red-100 text-red-700 border-red-200 hover:bg-red-100">
             ویدیوهای رایگان
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             ویدیوهای آموزشی رایگان
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -1298,7 +1298,7 @@ function FreeVideosPage() {
             >
               <Card className="card-hover h-full border-red-100 bg-white">
                 {/* Thumbnail placeholder */}
-                <div className="relative bg-gradient-to-bl from-red-500 to-emerald-600 h-44 flex items-center justify-center rounded-t-lg">
+                <div className="relative bg-gradient-to-bl from-red-500 to-orange-600 h-44 flex items-center justify-center rounded-t-lg">
                   <Play className="h-16 w-16 text-white/80" />
                   <Badge className="absolute top-3 right-3 bg-white/20 text-white border-white/30">
                     پایه {video.grade}
@@ -1308,7 +1308,7 @@ function FreeVideosPage() {
                   </span>
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-lg font-bold text-emerald-800">
+                  <CardTitle className="text-lg font-bold text-orange-800">
                     {video.title}
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
@@ -1392,7 +1392,7 @@ function BookletsPage() {
   };
 
   return (
-    <section className="py-20 bg-emerald-50/50">
+    <section className="py-20 bg-orange-50/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
@@ -1402,10 +1402,10 @@ function BookletsPage() {
           transition={{ duration: 0.6 }}
           className="mb-10 text-center"
         >
-          <Badge className="mb-4 bg-teal-100 text-teal-700 border-teal-200 hover:bg-teal-100">
+          <Badge className="mb-4 bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-100">
             جزوه‌ها
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             جزوه‌های طبقه‌بندی شده
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -1419,8 +1419,8 @@ function BookletsPage() {
             onClick={() => setSelectedGrade("all")}
             className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
               selectedGrade === "all"
-                ? "bg-teal-600 text-white"
-                : "bg-white text-teal-700 border border-teal-200 hover:bg-teal-50"
+                ? "bg-orange-600 text-white"
+                : "bg-white text-orange-700 border border-orange-200 hover:bg-orange-50"
             }`}
           >
             همه پایه‌ها
@@ -1432,8 +1432,8 @@ function BookletsPage() {
                 onClick={() => setSelectedGrade(grade)}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                   selectedGrade === grade
-                    ? "bg-teal-600 text-white"
-                    : "bg-white text-teal-700 border border-teal-200 hover:bg-teal-50"
+                    ? "bg-orange-600 text-white"
+                    : "bg-white text-orange-700 border border-orange-200 hover:bg-orange-50"
                 }`}
               >
                 پایه {grade}
@@ -1456,17 +1456,17 @@ function BookletsPage() {
               variants={fadeInUp}
               transition={{ duration: 0.5 }}
             >
-              <Card className="card-hover h-full border-teal-100 bg-white">
+              <Card className="card-hover h-full border-orange-100 bg-white">
                 {/* Booklet icon header */}
-                <div className="bg-gradient-to-bl from-teal-500 to-emerald-600 h-24 flex items-center justify-center rounded-t-lg">
+                <div className="bg-gradient-to-bl from-orange-500 to-orange-600 h-24 flex items-center justify-center rounded-t-lg">
                   <BookOpen className="h-10 w-10 text-white/80" />
                 </div>
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg font-bold text-emerald-800">
+                    <CardTitle className="text-lg font-bold text-orange-800">
                       {booklet.name}
                     </CardTitle>
-                    <Badge className="bg-teal-100 text-teal-700 border-teal-200">
+                    <Badge className="bg-orange-100 text-orange-700 border-orange-200">
                       {booklet.grade}
                     </Badge>
                   </div>
@@ -1477,15 +1477,15 @@ function BookletsPage() {
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">تعداد صفحات:</span>
-                    <span className="font-bold text-teal-700">
+                    <span className="font-bold text-orange-700">
                       {booklet.pages} صفحه
                     </span>
                   </div>
-                  <div className="text-center bg-teal-50 rounded-lg p-3 border border-teal-100">
-                    <span className="text-xl font-bold text-teal-700">
+                  <div className="text-center bg-orange-50 rounded-lg p-3 border border-orange-100">
+                    <span className="text-xl font-bold text-orange-700">
                       {booklet.priceLabel}
                     </span>
-                    <span className="text-sm text-teal-600 mr-1">تومان</span>
+                    <span className="text-sm text-orange-600 mr-1">تومان</span>
                   </div>
                 </CardContent>
                 <CardFooter>
@@ -1499,7 +1499,7 @@ function BookletsPage() {
                         grade: booklet.grade,
                       })
                     }
-                    className="w-full bg-teal-600 text-white hover:bg-teal-700 gap-2"
+                    className="w-full bg-orange-600 text-white hover:bg-orange-700 gap-2"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     افزودن به سبد خرید
@@ -1551,8 +1551,8 @@ function CartPage() {
     return (
       <section className="py-20 bg-white min-h-[60vh] flex items-center">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <ShoppingCart className="h-20 w-20 text-emerald-200 mx-auto mb-6" />
-          <h2 className="mb-4 text-2xl font-bold text-emerald-800">
+          <ShoppingCart className="h-20 w-20 text-orange-200 mx-auto mb-6" />
+          <h2 className="mb-4 text-2xl font-bold text-orange-800">
             سبد خرید شما خالی است
           </h2>
           <p className="text-muted-foreground mb-8">
@@ -1560,7 +1560,7 @@ function CartPage() {
           </p>
           <Button
             onClick={() => useAppStore.getState().setCurrentPage("classes")}
-            className="bg-emerald-600 text-white hover:bg-emerald-700"
+            className="bg-orange-600 text-white hover:bg-orange-700"
           >
             مشاهده کلاس‌ها
           </Button>
@@ -1580,31 +1580,31 @@ function CartPage() {
           transition={{ duration: 0.6 }}
           className="mb-10 text-center"
         >
-          <Badge className="mb-4 bg-emerald-100 text-emerald-700 border-emerald-200">
+          <Badge className="mb-4 bg-orange-100 text-orange-700 border-orange-200">
             سبد خرید
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             سبد خرید شما
           </h2>
         </motion.div>
 
         <div className="space-y-4">
           {cart.map((item) => (
-            <Card key={item.id} className="border-emerald-100">
+            <Card key={item.id} className="border-orange-100">
               <CardContent className="flex items-center justify-between pt-6 gap-4">
                 <div className="flex-1">
-                  <h3 className="font-bold text-emerald-800">{item.name}</h3>
+                  <h3 className="font-bold text-orange-800">{item.name}</h3>
                   <div className="flex flex-wrap gap-2 mt-1">
                     <Badge
                       variant="outline"
-                      className="text-xs border-emerald-200 text-emerald-600"
+                      className="text-xs border-orange-200 text-orange-600"
                     >
                       {getTypeLabel(item.type)}
                     </Badge>
                     {item.grade && (
                       <Badge
                         variant="outline"
-                        className="text-xs border-emerald-200 text-emerald-600"
+                        className="text-xs border-orange-200 text-orange-600"
                       >
                         پایه {item.grade}
                       </Badge>
@@ -1612,7 +1612,7 @@ function CartPage() {
                     {item.teacher && (
                       <Badge
                         variant="outline"
-                        className="text-xs border-emerald-200 text-emerald-600"
+                        className="text-xs border-orange-200 text-orange-600"
                       >
                         {item.teacher}
                       </Badge>
@@ -1620,7 +1620,7 @@ function CartPage() {
                   </div>
                 </div>
                 <div className="text-left">
-                  <p className="font-bold text-emerald-700">
+                  <p className="font-bold text-orange-700">
                     {formatPrice(item.price)} تومان
                   </p>
                 </div>
@@ -1638,13 +1638,13 @@ function CartPage() {
         </div>
 
         {/* Total & Checkout */}
-        <Card className="mt-6 border-emerald-200">
+        <Card className="mt-6 border-orange-200">
           <CardContent className="pt-6 space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-emerald-800">
+              <span className="text-lg font-bold text-orange-800">
                 مجموع سبد خرید:
               </span>
-              <span className="text-2xl font-extrabold text-emerald-700">
+              <span className="text-2xl font-extrabold text-orange-700">
                 {formatPrice(total)} تومان
               </span>
             </div>
@@ -1652,7 +1652,7 @@ function CartPage() {
             <div className="flex gap-3">
               <Button
                 onClick={handleCheckout}
-                className="flex-1 bg-emerald-600 text-white hover:bg-emerald-700 gap-2 py-6 text-base font-bold"
+                className="flex-1 bg-orange-600 text-white hover:bg-orange-700 gap-2 py-6 text-base font-bold"
               >
                 <CreditCard className="h-5 w-5" />
                 پرداخت و تکمیل خرید
@@ -1691,7 +1691,7 @@ function AboutPage() {
           <Badge className="mb-4 bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100">
             درباره ما
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             درباره {ACADEMY_NAME}
           </h2>
         </motion.div>
@@ -1704,10 +1704,10 @@ function AboutPage() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <Card className="border-emerald-100 overflow-hidden">
-            <div className="bg-gradient-to-l from-emerald-600 to-teal-600 p-8 text-white">
+          <Card className="border-orange-100 overflow-hidden">
+            <div className="bg-gradient-to-l from-orange-600 to-orange-600 p-8 text-white">
               <h3 className="text-2xl font-bold mb-4">{ACADEMY_NAME}</h3>
-              <p className="text-emerald-100 leading-relaxed max-w-3xl">
+              <p className="text-orange-100 leading-relaxed max-w-3xl">
                 آکادمی ریاضی عرفان با هدف ارائه آموزش تخصصی و باکیفیت ریاضیات به
                 دانش‌آموزان سراسر ایران تأسیس شده است. ما با بهره‌گیری از
                 اساتید برتر کشور و پلتفرم آموزش آنلاین SkyRoom، کلاس‌های زنده و
@@ -1731,11 +1731,11 @@ function AboutPage() {
           <Card className="border-amber-200 bg-amber-50/30 overflow-hidden">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-4">
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-bl from-amber-500 to-emerald-600 text-white shrink-0">
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-bl from-amber-500 to-orange-600 text-white shrink-0">
                   <GraduationCap className="h-10 w-10" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-extrabold text-emerald-800">
+                  <CardTitle className="text-2xl font-extrabold text-orange-800">
                     محمد حسن آقایی‌زاده
                   </CardTitle>
                   <p className="text-amber-700 font-medium mt-1">
@@ -1771,10 +1771,10 @@ function AboutPage() {
 
                 <div className="bg-white rounded-xl p-4 border border-amber-100">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
                       <BookMarked className="h-5 w-5" />
                     </div>
-                    <h4 className="font-bold text-emerald-800">استاد برتر خانه ریاضی</h4>
+                    <h4 className="font-bold text-orange-800">استاد برتر خانه ریاضی</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     از اساتید برتر و فعال خانه ریاضی با سابقه درخشان در آموزش
@@ -1784,10 +1784,10 @@ function AboutPage() {
 
                 <div className="bg-white rounded-xl p-4 border border-amber-100">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100 text-teal-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
                       <Shield className="h-5 w-5" />
                     </div>
-                    <h4 className="font-bold text-teal-800">معلم رسمی آموزش و پرورش</h4>
+                    <h4 className="font-bold text-orange-800">معلم رسمی آموزش و پرورش</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     دارای سمت رسمی معلمی در آموزش و پرورش با سابقه تدریس در
@@ -1853,17 +1853,17 @@ function AboutPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <Card className="border-emerald-100">
+          <Card className="border-orange-100">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-emerald-600 text-white shrink-0">
+                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-orange-600 text-white shrink-0">
                   <User className="h-8 w-8" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-emerald-800">
+                  <CardTitle className="text-xl font-bold text-orange-800">
                     دکتر باوفا
                   </CardTitle>
-                  <p className="text-emerald-600 font-medium mt-1">
+                  <p className="text-orange-600 font-medium mt-1">
                     استاد ریاضی پایه ششم و هفتم
                   </p>
                 </div>
@@ -1905,7 +1905,7 @@ function ContactSection() {
   };
 
   return (
-    <section className="py-20 bg-emerald-50/50">
+    <section className="py-20 bg-orange-50/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
@@ -1915,10 +1915,10 @@ function ContactSection() {
           transition={{ duration: 0.6 }}
           className="mb-14 text-center"
         >
-          <Badge className="mb-4 bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100">
+          <Badge className="mb-4 bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-100">
             تماس
           </Badge>
-          <h2 className="mb-4 text-3xl font-extrabold text-emerald-900 sm:text-4xl">
+          <h2 className="mb-4 text-3xl font-extrabold text-orange-900 sm:text-4xl">
             تماس با ما
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
@@ -1936,16 +1936,16 @@ function ContactSection() {
             className="space-y-6"
           >
             <motion.div variants={fadeInUp} transition={{ duration: 0.5 }}>
-              <Card className="border-emerald-100 bg-emerald-50/50">
+              <Card className="border-orange-100 bg-orange-50/50">
                 <CardContent className="flex items-center gap-4 pt-6">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-600 text-white">
                     <Phone className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       تلفن تماس
                     </p>
-                    <p className="text-lg font-bold text-emerald-800" dir="ltr">
+                    <p className="text-lg font-bold text-orange-800" dir="ltr">
                       +98 938 731 3618
                     </p>
                   </div>
@@ -1954,16 +1954,16 @@ function ContactSection() {
             </motion.div>
 
             <motion.div variants={fadeInUp} transition={{ duration: 0.5 }}>
-              <Card className="border-emerald-100 bg-emerald-50/50">
+              <Card className="border-orange-100 bg-orange-50/50">
                 <CardContent className="flex items-center gap-4 pt-6">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-600 text-white">
                     <Mail className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       ایمیل
                     </p>
-                    <p className="text-lg font-bold text-emerald-800" dir="ltr">
+                    <p className="text-lg font-bold text-orange-800" dir="ltr">
                       ef.aghaeizadeh@gmail.com
                     </p>
                   </div>
@@ -1997,9 +1997,9 @@ function ContactSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Card className="border-emerald-100">
+            <Card className="border-orange-100">
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-emerald-800">
+                <CardTitle className="text-xl font-bold text-orange-800">
                   پیام خود را ارسال کنید
                 </CardTitle>
                 <CardDescription>
@@ -2009,7 +2009,7 @@ function ContactSection() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-emerald-800">
+                    <Label htmlFor="name" className="text-orange-800">
                       نام و نام خانوادگی
                     </Label>
                     <Input
@@ -2019,11 +2019,11 @@ function ContactSection() {
                       placeholder="نام خود را وارد کنید"
                       value={formData.name}
                       onChange={handleChange}
-                      className="border-emerald-200 focus-visible:ring-emerald-500"
+                      className="border-orange-200 focus-visible:ring-orange-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-emerald-800">
+                    <Label htmlFor="email" className="text-orange-800">
                       ایمیل
                     </Label>
                     <Input
@@ -2033,12 +2033,12 @@ function ContactSection() {
                       placeholder="example@email.com"
                       value={formData.email}
                       onChange={handleChange}
-                      className="border-emerald-200 focus-visible:ring-emerald-500"
+                      className="border-orange-200 focus-visible:ring-orange-500"
                       dir="ltr"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-emerald-800">
+                    <Label htmlFor="message" className="text-orange-800">
                       پیام
                     </Label>
                     <Textarea
@@ -2048,12 +2048,12 @@ function ContactSection() {
                       value={formData.message}
                       onChange={handleChange}
                       rows={5}
-                      className="border-emerald-200 focus-visible:ring-emerald-500 resize-none"
+                      className="border-orange-200 focus-visible:ring-orange-500 resize-none"
                     />
                   </div>
                   <Button
                     type="submit"
-                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2 py-5"
+                    className="w-full bg-orange-600 text-white hover:bg-orange-700 gap-2 py-5"
                   >
                     <Send className="h-4 w-4" />
                     ارسال پیام
@@ -2076,8 +2076,8 @@ function ProfilePage() {
     return (
       <section className="py-20 bg-white min-h-[60vh] flex items-center">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <User className="h-20 w-20 text-emerald-200 mx-auto mb-6" />
-          <h2 className="mb-4 text-2xl font-bold text-emerald-800">
+          <User className="h-20 w-20 text-orange-200 mx-auto mb-6" />
+          <h2 className="mb-4 text-2xl font-bold text-orange-800">
             ابتدا وارد حساب کاربری خود شوید
           </h2>
         </div>
@@ -2096,19 +2096,19 @@ function ProfilePage() {
           transition={{ duration: 0.6 }}
           className="mb-10"
         >
-          <Card className="border-emerald-100 overflow-hidden">
-            <div className="bg-gradient-to-l from-emerald-600 to-teal-600 p-6 text-white">
+          <Card className="border-orange-100 overflow-hidden">
+            <div className="bg-gradient-to-l from-orange-600 to-orange-600 p-6 text-white">
               <div className="flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20">
                   <User className="h-8 w-8" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold">{user.name}</h2>
-                  <p className="text-emerald-200" dir="ltr">
+                  <p className="text-orange-200" dir="ltr">
                     {user.email}
                   </p>
                   {user.phone && (
-                    <p className="text-emerald-200" dir="ltr">
+                    <p className="text-orange-200" dir="ltr">
                       {user.phone}
                     </p>
                   )}
@@ -2129,19 +2129,19 @@ function ProfilePage() {
         </motion.div>
 
         {/* Purchases */}
-        <h3 className="text-xl font-bold text-emerald-800 mb-4">
+        <h3 className="text-xl font-bold text-orange-800 mb-4">
           خریدهای من
         </h3>
         {purchases.length === 0 ? (
-          <Card className="border-emerald-100">
+          <Card className="border-orange-100">
             <CardContent className="py-12 text-center">
-              <Package className="h-12 w-12 text-emerald-200 mx-auto mb-4" />
+              <Package className="h-12 w-12 text-orange-200 mx-auto mb-4" />
               <p className="text-muted-foreground">
                 هنوز خریدی انجام نداده‌اید
               </p>
               <Button
                 onClick={() => setCurrentPage("classes")}
-                className="mt-4 bg-emerald-600 text-white hover:bg-emerald-700"
+                className="mt-4 bg-orange-600 text-white hover:bg-orange-700"
               >
                 مشاهده کلاس‌ها و محصولات
               </Button>
@@ -2150,10 +2150,10 @@ function ProfilePage() {
         ) : (
           <div className="space-y-3">
             {purchases.map((purchase) => (
-              <Card key={purchase.id} className="border-emerald-100">
+              <Card key={purchase.id} className="border-orange-100">
                 <CardContent className="flex items-center justify-between pt-6">
                   <div>
-                    <h4 className="font-bold text-emerald-800">
+                    <h4 className="font-bold text-orange-800">
                       {purchase.name}
                     </h4>
                     <p className="text-sm text-muted-foreground">
@@ -2169,7 +2169,7 @@ function ProfilePage() {
                       >
                         <Button
                           size="sm"
-                          className="bg-emerald-600 text-white hover:bg-emerald-700 gap-1"
+                          className="bg-orange-600 text-white hover:bg-orange-700 gap-1"
                         >
                           <ExternalLink className="h-3 w-3" />
                           ورود به کلاس
@@ -2180,7 +2180,7 @@ function ProfilePage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-emerald-200 text-emerald-700 gap-1"
+                        className="border-orange-200 text-orange-700 gap-1"
                       >
                         <Download className="h-3 w-3" />
                         دانلود
@@ -2202,20 +2202,20 @@ function Footer() {
   const { setCurrentPage } = useAppStore();
 
   return (
-    <footer className="bg-emerald-900 text-emerald-100">
+    <footer className="bg-orange-900 text-orange-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-600 text-white">
                 <Calculator className="h-5 w-5" />
               </div>
               <span className="text-xl font-bold text-white">
                 {ACADEMY_NAME}
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-emerald-300">
+            <p className="text-sm leading-relaxed text-orange-300">
               آکادمی ریاضی عرفان با هدف آموزش نوین و تعاملی ریاضیات به
               دانش‌آموزان سراسر ایران فعالیت می‌کند.
             </p>
@@ -2229,7 +2229,7 @@ function Footer() {
                 <button
                   key={link.href}
                   onClick={() => setCurrentPage(link.href as PageView)}
-                  className="text-right text-sm text-emerald-300 transition-colors hover:text-white"
+                  className="text-right text-sm text-orange-300 transition-colors hover:text-white"
                 >
                   {link.label}
                 </button>
@@ -2243,25 +2243,25 @@ function Footer() {
             <nav className="flex flex-col gap-2">
               <button
                 onClick={() => setCurrentPage("classes")}
-                className="text-right text-sm text-emerald-300 transition-colors hover:text-white"
+                className="text-right text-sm text-orange-300 transition-colors hover:text-white"
               >
                 کلاس‌های آنلاین
               </button>
               <button
                 onClick={() => setCurrentPage("products")}
-                className="text-right text-sm text-emerald-300 transition-colors hover:text-white"
+                className="text-right text-sm text-orange-300 transition-colors hover:text-white"
               >
                 پکیج‌های ویدیویی
               </button>
               <button
                 onClick={() => setCurrentPage("booklets")}
-                className="text-right text-sm text-emerald-300 transition-colors hover:text-white"
+                className="text-right text-sm text-orange-300 transition-colors hover:text-white"
               >
                 جزوه‌های آموزشی
               </button>
               <button
                 onClick={() => setCurrentPage("free-videos")}
-                className="text-right text-sm text-emerald-300 transition-colors hover:text-white"
+                className="text-right text-sm text-orange-300 transition-colors hover:text-white"
               >
                 ویدیوهای رایگان
               </button>
@@ -2271,7 +2271,7 @@ function Footer() {
           {/* Contact Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white">اطلاعات تماس</h3>
-            <div className="space-y-2 text-sm text-emerald-300">
+            <div className="space-y-2 text-sm text-orange-300">
               <p dir="ltr" className="text-right">
                 +98 938 731 3618
               </p>
@@ -2282,10 +2282,10 @@ function Footer() {
           </div>
         </div>
 
-        <Separator className="my-8 bg-emerald-700" />
+        <Separator className="my-8 bg-orange-700" />
 
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-sm text-emerald-400">
+          <p className="text-sm text-orange-400">
             تمامی حقوق محفوظ است {ACADEMY_NAME}
           </p>
         </div>
@@ -2319,7 +2319,7 @@ function ScrollToTop() {
       <Button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         size="icon"
-        className="h-12 w-12 rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700"
+        className="h-12 w-12 rounded-full bg-orange-600 text-white shadow-lg hover:bg-orange-700"
       >
         <ArrowUp className="h-5 w-5" />
       </Button>
