@@ -1,0 +1,11 @@
+// Local development schema (SQLite)
+// This file is for local dev only - Railway uses schema.prisma with PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
