@@ -51,5 +51,6 @@ test
 prompt
 
 server.log
+bun.lock
 # Skills directory
 /skills/
