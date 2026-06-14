@@ -20,8 +20,16 @@ COPY . .
 # Switch to PostgreSQL again (in case COPY overwrote our change)
 RUN sed -i 's/provider = "sqlite"/provider = "postgresql"/g' prisma/schema.prisma
 
+# Dummy DATABASE_URL for build-time Prisma validation and Next.js prerendering.
+# The real DATABASE_URL is injected by Railway at runtime.
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL=${DATABASE_URL}
+
 # Generate Prisma client and build
 RUN npx prisma generate && npx next build
+
+# Unset the dummy DATABASE_URL so the runtime value from Railway takes effect
+ENV DATABASE_URL=""
 
 EXPOSE 3000
 
