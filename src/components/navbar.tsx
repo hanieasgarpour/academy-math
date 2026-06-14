@@ -10,7 +10,6 @@ import {
   SheetTrigger,
   SheetTitle,
   SheetDescription,
-  SheetClose,
 } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -144,14 +143,14 @@ export function Navbar() {
               {/* Nav Links */}
               <nav className="flex flex-col p-4 gap-1">
                 {navLinks.map((link) => (
-                  <SheetClose asChild key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-accent transition-colors py-2.5 px-3 rounded-md"
-                    >
-                      {link.label}
-                    </Link>
-                  </SheetClose>
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-accent transition-colors py-2.5 px-3 rounded-md"
+                  >
+                    {link.label}
+                  </Link>
                 ))}
               </nav>
 
@@ -163,58 +162,52 @@ export function Navbar() {
                       {session.user.name}
                     </div>
                     {session.user.role === "ADMIN" && (
-                      <SheetClose asChild>
-                        <Link
-                          href="/admin"
-                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
-                        >
-                          <Shield className="h-4 w-4" />
-                          پنل مدیریت
-                        </Link>
-                      </SheetClose>
+                      <Link
+                        href="/admin"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                      >
+                        <Shield className="h-4 w-4" />
+                        پنل مدیریت
+                      </Link>
                     )}
-                    <SheetClose asChild>
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
-                      >
-                        <LayoutDashboard className="h-4 w-4" />
-                        داشبورد
-                      </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Link
-                        href="/profile"
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
-                      >
-                        <User className="h-4 w-4" />
-                        پروفایل
-                      </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <button
-                        onClick={() => signOut({ callbackUrl: "/" })}
-                        className="flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 hover:bg-destructive/10 py-2.5 px-3 rounded-md w-full text-right"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        خروج
-                      </button>
-                    </SheetClose>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      داشبورد
+                    </Link>
+                    <Link
+                      href="/profile"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                    >
+                      <User className="h-4 w-4" />
+                      پروفایل
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      className="flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 hover:bg-destructive/10 py-2.5 px-3 rounded-md w-full text-right"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      خروج
+                    </button>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <SheetClose asChild>
-                      <Link href="/login">
-                        <Button variant="outline" className="w-full">
-                          ورود
-                        </Button>
-                      </Link>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Link href="/register">
-                        <Button className="w-full">ثبت‌نام</Button>
-                      </Link>
-                    </SheetClose>
+                    <Link href="/login" onClick={() => setOpen(false)}>
+                      <Button variant="outline" className="w-full">
+                        ورود
+                      </Button>
+                    </Link>
+                    <Link href="/register" onClick={() => setOpen(false)}>
+                      <Button className="w-full">ثبت‌نام</Button>
+                    </Link>
                   </div>
                 )}
               </div>
