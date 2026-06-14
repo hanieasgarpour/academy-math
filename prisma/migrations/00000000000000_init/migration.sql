@@ -1,3 +1,18 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'STUDENT');
+
+-- CreateEnum
+CREATE TYPE "CourseLevel" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
+
+-- CreateEnum
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'FAILED', 'CANCELLED');
+
+-- CreateEnum
+CREATE TYPE "PaymentGateway" AS ENUM ('ZARINPAL');
+
+-- CreateEnum
+CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESS', 'FAILED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -5,7 +20,7 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "phone" TEXT,
     "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'STUDENT',
+    "role" "Role" NOT NULL DEFAULT 'STUDENT',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -18,7 +33,7 @@ CREATE TABLE "Course" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
-    "level" TEXT NOT NULL,
+    "level" "CourseLevel" NOT NULL,
     "thumbnail" TEXT,
     "duration" TEXT,
     "published" BOOLEAN NOT NULL DEFAULT false,
@@ -71,8 +86,8 @@ CREATE TABLE "Order" (
     "userId" TEXT NOT NULL,
     "courseId" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "gateway" TEXT NOT NULL DEFAULT 'ZARINPAL',
+    "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
+    "gateway" "PaymentGateway" NOT NULL DEFAULT 'ZARINPAL',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -85,8 +100,8 @@ CREATE TABLE "Payment" (
     "orderId" TEXT NOT NULL,
     "authority" TEXT,
     "refId" TEXT,
-    "gateway" TEXT NOT NULL DEFAULT 'ZARINPAL',
-    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "gateway" "PaymentGateway" NOT NULL DEFAULT 'ZARINPAL',
+    "status" "PaymentStatus" NOT NULL DEFAULT 'PENDING',
     "cardPan" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
