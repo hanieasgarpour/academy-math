@@ -9,6 +9,8 @@ import {
   SheetContent,
   SheetTrigger,
   SheetTitle,
+  SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -21,7 +23,6 @@ import {
   Menu,
   User,
   LogOut,
-  BookOpen,
   LayoutDashboard,
   Shield,
   GraduationCap,
@@ -124,80 +125,100 @@ export function Navbar() {
         {/* Mobile Menu */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="باز کردن منو">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-72">
-            <SheetTitle className="text-right">آکادمی ریاضی ارفعان</SheetTitle>
-            <nav className="flex flex-col gap-4 mt-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="border-t pt-4 mt-2">
+          <SheetContent side="right" className="w-72 p-0">
+            <div className="flex flex-col h-full">
+              {/* Header */}
+              <div className="p-4 border-b flex items-center justify-between">
+                <SheetTitle className="text-base">
+                  آکادمی ریاضی ارفعان
+                </SheetTitle>
+                <SheetDescription className="sr-only">
+                  منوی ناوبری موبایل
+                </SheetDescription>
+              </div>
+
+              {/* Nav Links */}
+              <nav className="flex flex-col p-4 gap-1">
+                {navLinks.map((link) => (
+                  <SheetClose asChild key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-accent transition-colors py-2.5 px-3 rounded-md"
+                    >
+                      {link.label}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </nav>
+
+              {/* Auth Section */}
+              <div className="border-t p-4 mt-auto">
                 {status === "authenticated" && session?.user ? (
-                  <>
-                    <div className="px-2 py-3 text-sm font-medium">
+                  <div className="flex flex-col gap-1">
+                    <div className="px-3 py-2 text-sm font-medium border-b mb-2">
                       {session.user.name}
                     </div>
                     {session.user.role === "ADMIN" && (
-                      <Link
-                        href="/admin"
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-2 px-2"
-                      >
-                        <Shield className="h-4 w-4" />
-                        پنل مدیریت
-                      </Link>
+                      <SheetClose asChild>
+                        <Link
+                          href="/admin"
+                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                        >
+                          <Shield className="h-4 w-4" />
+                          پنل مدیریت
+                        </Link>
+                      </SheetClose>
                     )}
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-2 px-2"
-                    >
-                      <LayoutDashboard className="h-4 w-4" />
-                      داشبورد
-                    </Link>
-                    <Link
-                      href="/profile"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-2 px-2"
-                    >
-                      <User className="h-4 w-4" />
-                      پروفایل
-                    </Link>
-                    <button
-                      onClick={() => {
-                        setOpen(false);
-                        signOut({ callbackUrl: "/" });
-                      }}
-                      className="flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 py-2 px-2 w-full"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      خروج
-                    </button>
-                  </>
+                    <SheetClose asChild>
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        داشبورد
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                      >
+                        <User className="h-4 w-4" />
+                        پروفایل
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="flex items-center gap-2 text-sm text-destructive hover:text-destructive/80 hover:bg-destructive/10 py-2.5 px-3 rounded-md w-full text-right"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        خروج
+                      </button>
+                    </SheetClose>
+                  </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <Link href="/login" onClick={() => setOpen(false)}>
-                      <Button variant="outline" className="w-full">
-                        ورود
-                      </Button>
-                    </Link>
-                    <Link href="/register" onClick={() => setOpen(false)}>
-                      <Button className="w-full">ثبت‌نام</Button>
-                    </Link>
+                    <SheetClose asChild>
+                      <Link href="/login">
+                        <Button variant="outline" className="w-full">
+                          ورود
+                        </Button>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link href="/register">
+                        <Button className="w-full">ثبت‌نام</Button>
+                      </Link>
+                    </SheetClose>
                   </div>
                 )}
               </div>
-            </nav>
+            </div>
           </SheetContent>
         </Sheet>
       </div>

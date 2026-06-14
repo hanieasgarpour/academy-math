@@ -1,9 +1,9 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "sed -i 's/provider = \"sqlite\"/provider = \"postgresql\"/g' prisma/schema.prisma && npx prisma generate && npx prisma migrate deploy && next build"
+buildCommand = "npx prisma generate && npx prisma migrate deploy && next build"
 
 [deploy]
-startCommand = "next start"
+startCommand = "next start -p $PORT"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
