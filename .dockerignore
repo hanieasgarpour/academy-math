@@ -12,3 +12,6 @@ mini-services
 upload
 Caddyfile
 dev.log
+.env
+.env.local
+.env*.local

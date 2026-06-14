@@ -26,6 +26,9 @@ function toToman(rials: number): string {
   return (rials / 10).toLocaleString("fa-IR");
 }
 
+// Force dynamic rendering - don't try to query DB at build time
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const courses = await db.course.findMany({
     where: { published: true },
