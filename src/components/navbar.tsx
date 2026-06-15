@@ -77,20 +77,21 @@ export function Navbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
-                {session.user.role === "ADMIN" && (
+                {session.user.role === "ADMIN" ? (
                   <DropdownMenuItem asChild>
                     <Link href="/admin" className="gap-2">
                       <Shield className="h-4 w-4" />
                       پنل مدیریت
                     </Link>
                   </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="gap-2">
+                      <LayoutDashboard className="h-4 w-4" />
+                      داشبورد
+                    </Link>
+                  </DropdownMenuItem>
                 )}
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="gap-2">
-                    <LayoutDashboard className="h-4 w-4" />
-                    داشبورد
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/profile" className="gap-2">
                     <User className="h-4 w-4" />
@@ -161,7 +162,7 @@ export function Navbar() {
                     <div className="px-3 py-2 text-sm font-medium border-b mb-2">
                       {session.user.name}
                     </div>
-                    {session.user.role === "ADMIN" && (
+                    {session.user.role === "ADMIN" ? (
                       <Link
                         href="/admin"
                         onClick={() => setOpen(false)}
@@ -170,15 +171,16 @@ export function Navbar() {
                         <Shield className="h-4 w-4" />
                         پنل مدیریت
                       </Link>
+                    ) : (
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        داشبورد
+                      </Link>
                     )}
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:bg-accent py-2.5 px-3 rounded-md"
-                    >
-                      <LayoutDashboard className="h-4 w-4" />
-                      داشبورد
-                    </Link>
                     <Link
                       href="/profile"
                       onClick={() => setOpen(false)}

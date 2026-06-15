@@ -11,6 +11,8 @@ import {
   Clock,
   Signal,
   Star,
+  Phone,
+  Mail,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -206,7 +208,7 @@ export default async function HomePage() {
       <section className="py-16 md:py-20 bg-muted/30" id="about">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">چرا آکادمی ارفعان؟</h2>
+            <h2 className="text-3xl font-bold mb-4">چرا آکادمی عرفان؟</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               ما تفاوت‌های بزرگی با سایر آموزشگاه‌ها داریم
             </p>
@@ -243,25 +245,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Contact Section */}
       <section className="py-16 md:py-20 bg-primary text-primary-foreground" id="contact">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            همین امروز شروع کنید!
-          </h2>
-          <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto leading-8">
-            با ثبت‌نام در آکادمی ریاضی عرفان، به بهترین منابع آموزشی ریاضی
-            دسترسی پیدا کنید و مسیر موفقیت خود را هموار سازید
-          </p>
-          <Link href="/register">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-base px-8"
-            >
-              ثبت‌نام رایگان
-            </Button>
-          </Link>
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 text-center">
+              تماس با ما
+            </h2>
+            <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto leading-8 text-center">
+              سوال یا مشکل دارید؟ از راه‌های زیر با ما در ارتباط باشید
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+              <div className="text-center p-6 rounded-xl bg-primary-foreground/10">
+                <Phone className="h-8 w-8 mx-auto mb-3 opacity-80" />
+                <h3 className="font-bold mb-2">تلفن</h3>
+                <p className="text-sm opacity-90" dir="ltr">09387313618</p>
+              </div>
+              <div className="text-center p-6 rounded-xl bg-primary-foreground/10">
+                <Mail className="h-8 w-8 mx-auto mb-3 opacity-80" />
+                <h3 className="font-bold mb-2">ایمیل</h3>
+                <p className="text-sm opacity-90" dir="ltr">ef.aghaeizadeh@gmail.com</p>
+              </div>
+              <div className="text-center p-6 rounded-xl bg-primary-foreground/10">
+                <Signal className="h-8 w-8 mx-auto mb-3 opacity-80" />
+                <h3 className="font-bold mb-2">کلاس‌های آنلاین</h3>
+                <p className="text-sm opacity-90">تمامی کلاس‌ها به‌صورت آنلاین در اسکای‌روم با قلم نوری برگزار می‌شود</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <Link href="/register">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="text-base px-8"
+                >
+                  ثبت‌نام رایگان
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
