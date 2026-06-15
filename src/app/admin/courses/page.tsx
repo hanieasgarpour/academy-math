@@ -21,8 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, BookOpen } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const levelMap: Record<string, { label: string; color: string }> = {
   BEGINNER: { label: "مبتدی", color: "bg-green-100 text-green-700" },
@@ -42,6 +43,7 @@ interface CourseItem {
 }
 
 export default function AdminCoursesPage() {
+  const router = useRouter();
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -289,6 +291,14 @@ export default function AdminCoursesPage() {
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => router.push(`/admin/courses/${course.id}/lessons`)}
+                              title="مدیریت دروس"
+                            >
+                              <BookOpen className="h-4 w-4 text-green-600" />
+                            </Button>
                             <Button
                               size="icon"
                               variant="ghost"

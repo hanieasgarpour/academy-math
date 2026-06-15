@@ -13,7 +13,7 @@ async function main() {
     update: {},
     create: {
       email: "admin@erfan-math.ir",
-      name: "ارفعان",
+      name: "عرفان",
       password: adminPassword,
       role: Role.ADMIN,
     },

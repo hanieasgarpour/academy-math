@@ -47,7 +47,7 @@ export function Navbar() {
             <GraduationCap className="h-5 w-5" />
           </div>
           <span className="text-lg font-bold hidden sm:inline-block">
-            آکادمی ریاضی ارفعان
+            آکادمی ریاضی عرفان
           </span>
         </Link>
 
@@ -133,7 +133,7 @@ export function Navbar() {
               {/* Header */}
               <div className="p-4 border-b flex items-center justify-between">
                 <SheetTitle className="text-base">
-                  آکادمی ریاضی ارفعان
+                  آکادمی ریاضی عرفان
                 </SheetTitle>
                 <SheetDescription className="sr-only">
                   منوی ناوبری موبایل

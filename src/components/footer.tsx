@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap, Phone, Mail, MapPin, Instagram } from "lucide-react";
+import { GraduationCap, Phone, Mail, Monitor } from "lucide-react";
 
 export function Footer() {
   return (
@@ -12,10 +12,10 @@ export function Footer() {
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <GraduationCap className="h-5 w-5" />
               </div>
-              <span className="text-lg font-bold">آکادمی ریاضی ارفعان</span>
+              <span className="text-lg font-bold">آکادمی ریاضی عرفان</span>
             </div>
             <p className="text-sm text-muted-foreground leading-7">
-              آکادمی ریاضی ارفعان با هدف آموزش با کیفیت ریاضی به دانش‌آموزان
+              آکادمی ریاضی عرفان با هدف آموزش با کیفیت ریاضی به دانش‌آموزان
               پایه‌های هفتم تا دوازدهم تأسیس شده است. ما با بهره‌گیری از
               بهترین اساتید و روش‌های تدریس نوین، مسیر یادگیری را برای شما
               هموار می‌کنیم.
@@ -59,19 +59,15 @@ export function Footer() {
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 text-primary" />
-                <span dir="ltr">۰۲۱-۱۲۳۴۵۶۷۸</span>
+                <span dir="ltr">۰۹۳۸۷۳۱۳۶۱۸</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 text-primary" />
-                <span dir="ltr">info@erfan-math.ir</span>
+                <span dir="ltr">ef.aghaeizadeh@gmail.com</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span>تهران، خیابان ولیعصر</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Instagram className="h-4 w-4 text-primary" />
-                <span dir="ltr">@erfan_math</span>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Monitor className="h-4 w-4 text-primary mt-0.5" />
+                <span>تمامی کلاس‌ها به‌صورت آنلاین و در بستر اسکای‌روم با قلم نوری برگزار می‌شود</span>
               </div>
             </div>
           </div>
@@ -80,7 +76,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="border-t mt-8 pt-6 text-center">
           <p className="text-sm text-muted-foreground">
-            © ۱۴۰۳ آکادمی ریاضی ارفعان. تمامی حقوق محفوظ است.
+            © ۱۴۰۳ آکادمی ریاضی عرفان. تمامی حقوق محفوظ است.
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "آکادمی ریاضی ارفعان",
+  title: "آکادمی ریاضی عرفان",
   description: "آموزش آنلاین ریاضی با بهترین اساتید - از پایه تا پیشرفته",
   icons: {
     icon: "/favicon.ico",

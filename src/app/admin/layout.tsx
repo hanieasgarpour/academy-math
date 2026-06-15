@@ -74,7 +74,7 @@ export default async function AdminLayout({
             <MobileSidebar />
           </div>
           <div className="text-sm text-muted-foreground">
-            پنل مدیریت آکادمی ریاضی ارفعان
+            پنل مدیریت آکادمی ریاضی عرفان
           </div>
           <div className="mr-auto text-sm">
             {session.user.name}

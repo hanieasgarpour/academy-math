@@ -58,7 +58,7 @@ export default async function HomePage() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
               <GraduationCap className="h-4 w-4" />
-              آکادمی ریاضی ارفعان
+              آکادمی ریاضی عرفان
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               یادگیری ریاضی با
@@ -250,7 +250,7 @@ export default async function HomePage() {
             همین امروز شروع کنید!
           </h2>
           <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto leading-8">
-            با ثبت‌نام در آکادمی ریاضی ارفعان، به بهترین منابع آموزشی ریاضی
+            با ثبت‌نام در آکادمی ریاضی عرفان، به بهترین منابع آموزشی ریاضی
             دسترسی پیدا کنید و مسیر موفقیت خود را هموار سازید
           </p>
           <Link href="/register">
