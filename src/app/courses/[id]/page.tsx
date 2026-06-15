@@ -87,6 +87,25 @@ export default function CourseDetailPage() {
     }
 
     try {
+      // If course is free, directly enroll without payment
+      if (course && course.price === 0) {
+        const res = await fetch("/api/enrollments/free", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ courseId: course.id }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          toast.success("ثبت‌نام با موفقیت انجام شد");
+          setEnrolled(true);
+        } else {
+          toast.error(data.error || "خطا در ثبت‌نام");
+        }
+        return;
+      }
+
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -213,8 +232,17 @@ export default function CourseDetailPage() {
                       className="w-full gap-2"
                       onClick={handleBuy}
                     >
-                      <ShoppingCart className="h-4 w-4" />
-                      خرید دوره
+                      {course.price === 0 ? (
+                        <>
+                          <CheckCircle className="h-4 w-4" />
+                          ثبت‌نام رایگان
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="h-4 w-4" />
+                          خرید دوره
+                        </>
+                      )}
                     </Button>
                   )}
                 </CardContent>

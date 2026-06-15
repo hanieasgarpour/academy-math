@@ -15,16 +15,19 @@ function toToman(rials: number): string {
   return (rials / 10).toLocaleString("fa-IR");
 }
 
+interface OrderData {
+  id: string;
+  amount: number;
+  status: string;
+  courseId: string;
+  course: { id: string; title: string };
+}
+
 export default function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
-  const { data: session, status } = useSession();
-  const [order, setOrder] = useState<{
-    id: string;
-    amount: number;
-    status: string;
-    course: { id: string; title: string };
-  } | null>(null);
+  const { status } = useSession();
+  const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
 
@@ -34,19 +37,25 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (status !== "authenticated") return;
     if (!params.orderId) return;
 
-    // Fetch order details
+    // Fetch order details from user orders
     fetch(`/api/user/orders`)
       .then((r) => r.json())
-      .then((orders) => {
-        const found = orders.find((o: { id: string }) => o.id === params.orderId);
-        if (found) {
-          setOrder(found);
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const found = data.find((o: { id: string }) => o.id === params.orderId);
+          if (found) {
+            setOrder(found);
+          }
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        toast.error("خطا در دریافت اطلاعات سفارش");
+        setLoading(false);
+      });
   }, [params.orderId, status, router]);
 
   async function handlePayment() {
@@ -129,7 +138,7 @@ export default function CheckoutPage() {
                   <div className="space-y-3 border rounded-lg p-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">دوره</span>
-                      <span className="font-medium">{order.course.title}</span>
+                      <span className="font-medium">{order.course?.title || "دوره"}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">مبلغ</span>
@@ -160,7 +169,7 @@ export default function CheckoutPage() {
                 </Button>
 
                 <Link
-                  href={`/courses/${order.course.id}`}
+                  href={order.course?.id ? `/courses/${order.course.id}` : "/courses"}
                   className="block text-center text-sm text-muted-foreground hover:text-primary"
                 >
                   بازگشت به صفحه دوره

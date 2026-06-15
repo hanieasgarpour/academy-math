@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const orders = await db.order.findMany({
       where: { userId: token.id as string },
       include: {
-        course: { select: { title: true } },
+        course: { select: { id: true, title: true } },
       },
       orderBy: { createdAt: "desc" },
     });
