@@ -29,6 +29,7 @@ import {
 
 const navLinks = [
   { href: "/", label: "خانه" },
+  { href: "/products", label: "محصولات" },
   { href: "/courses", label: "دوره‌ها" },
   { href: "/#about", label: "درباره ما" },
   { href: "/#contact", label: "تماس با ما" },

@@ -104,6 +104,11 @@ function LoginForm() {
               {loading ? "در حال ورود..." : "ورود"}
             </Button>
           </form>
+          <div className="text-center">
+            <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              فراموشی رمز عبور؟
+            </Link>
+          </div>
           <div className="mt-6 text-center text-sm text-muted-foreground">
             حساب کاربری ندارید؟{" "}
             <Link href="/register" className="text-primary hover:underline font-medium">

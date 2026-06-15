@@ -9,11 +9,15 @@ import {
   ShoppingCart,
   CreditCard,
   GraduationCap,
+  Video,
+  FileText,
 } from "lucide-react";
 
 const sidebarLinks = [
   { href: "/admin", label: "داشبورد", icon: LayoutDashboard },
   { href: "/admin/courses", label: "دوره‌ها", icon: BookOpen },
+  { href: "/admin/free-videos", label: "ویدیوهای رایگان", icon: Video },
+  { href: "/admin/notes", label: "جزوات", icon: FileText },
   { href: "/admin/users", label: "کاربران", icon: Users },
   { href: "/admin/orders", label: "سفارش‌ها", icon: ShoppingCart },
 ];

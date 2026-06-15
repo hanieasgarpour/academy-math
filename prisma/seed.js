@@ -35,10 +35,8 @@ async function main() {
   // Only seed courses if table is empty
   const courseCount = await prisma.course.count();
   if (courseCount > 0) {
-    console.log("Courses already exist, skipping seed.");
-    await prisma.$disconnect();
-    return;
-  }
+    console.log("Courses already exist, skipping course seed.");
+  } else {
 
   const coursesData = [
     {
@@ -182,10 +180,114 @@ async function main() {
     },
   });
 
+  } // end of course seeding else block
+
+  // Create sample free videos
+  const existingFreeVideos = await prisma.freeVideo.count();
+  if (existingFreeVideos === 0) {
+    const freeVideosData = [
+      {
+        title: "حل تمرین فصل ۱ ریاضی هفتم",
+        description: "حل کامل تمرین‌های فصل اول ریاضی پایه هفتم",
+        url: "https://www.youtube.com/watch?v=example1",
+        platform: "YOUTUBE",
+        order: 1,
+        published: true,
+      },
+      {
+        title: "آموزش جبر و عدد - پایه هشتم",
+        description: "آموزش رایگان مفاهیم جبر و عدد برای پایه هشتم",
+        url: "https://www.aparat.com/v/example2",
+        platform: "APARAT",
+        order: 2,
+        published: true,
+      },
+      {
+        title: "معرفی اعداد حقیقی - پایه نهم",
+        description: "آشنایی با مجموعه اعداد حقیقی و خواص آن‌ها",
+        url: "https://www.youtube.com/watch?v=example3",
+        platform: "YOUTUBE",
+        order: 3,
+        published: true,
+      },
+      {
+        title: "مفاهیم پایه هندسه - دهم",
+        description: "بررسی مفاهیم پایه هندسه تحلیلی برای پایه دهم",
+        url: "https://www.aparat.com/v/example4",
+        platform: "APARAT",
+        order: 4,
+        published: true,
+      },
+    ];
+
+    for (const data of freeVideosData) {
+      await prisma.freeVideo.create({ data });
+    }
+    console.log("Created " + freeVideosData.length + " free videos");
+  }
+
+  // Create sample notes
+  const existingNotes = await prisma.note.count();
+  if (existingNotes === 0) {
+    const notesData = [
+      {
+        title: "جزوه جامع ریاضی پایه هفتم",
+        description: "جزوه کامل ریاضی هفتم شامل تمام فصول با حل تمرین",
+        price: 500000,
+        gradeLevel: "GRADE_7",
+        pageCount: 85,
+        fileUrl: "/uploads/notes/sample-grade7.pdf",
+        fileName: "جزوه-ریاضی-هفتم.pdf",
+        fileSize: 2048000,
+        published: true,
+      },
+      {
+        title: "جزوه ریاضی پایه هشتم",
+        description: "جزوه خلاصه و نمونه سوال ریاضی هشتم",
+        price: 600000,
+        gradeLevel: "GRADE_8",
+        pageCount: 92,
+        fileUrl: "/uploads/notes/sample-grade8.pdf",
+        fileName: "جزوه-ریاضی-هشتم.pdf",
+        fileSize: 2560000,
+        published: true,
+      },
+      {
+        title: "جزوه جبر و احتمال دهم",
+        description: "جزوه تخصصی جبر و احتمال پایه دهم ریاضی",
+        price: 800000,
+        gradeLevel: "GRADE_10",
+        pageCount: 120,
+        fileUrl: "/uploads/notes/sample-grade10.pdf",
+        fileName: "جزوه-جبر-دهم.pdf",
+        fileSize: 3072000,
+        published: true,
+      },
+      {
+        title: "جزوه حسابان یازدهم",
+        description: "جزوه کامل حسابان یازدهم با حل مثال‌های کنکور",
+        price: 900000,
+        gradeLevel: "GRADE_11",
+        pageCount: 145,
+        fileUrl: "/uploads/notes/sample-grade11.pdf",
+        fileName: "جزوه-حسابان-یازدهم.pdf",
+        fileSize: 3584000,
+        published: true,
+      },
+    ];
+
+    for (const data of notesData) {
+      await prisma.note.create({ data });
+    }
+    console.log("Created " + notesData.length + " notes");
+  }
+
   console.log("Seed completed successfully!");
   console.log("Admin: admin@erfan-math.ir / admin1234");
   console.log("Student: student@example.com / student1234");
-  console.log("Created " + courses.length + " courses");
+  if (courseCount === 0) {
+    console.log("Created courses with lessons and sample order");
+  }
 }
 
 main()

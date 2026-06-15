@@ -46,6 +46,7 @@ model User {
   updatedAt    DateTime     @updatedAt
   orders       Order[]
   enrollments  Enrollment[]
+  noteOrders   NoteOrder[]
 }
 
 model Course {
@@ -124,4 +125,70 @@ model Payment {
   cardPan     String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+}
+
+enum VideoPlatform {
+  YOUTUBE
+  APARAT
+  CUSTOM
+}
+
+enum NoteGradeLevel {
+  GRADE_7
+  GRADE_8
+  GRADE_9
+  GRADE_10
+  GRADE_11
+  GRADE_12
+}
+
+model FreeVideo {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  url         String
+  platform    VideoPlatform @default(YOUTUBE)
+  thumbnail   String?
+  order       Int           @default(0)
+  published   Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Note {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  price       Int           @default(0)
+  gradeLevel  NoteGradeLevel
+  pageCount   Int           @default(0)
+  fileUrl     String
+  fileName    String
+  fileSize    Int           @default(0)
+  thumbnail   String?
+  published   Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  orders      NoteOrder[]
+}
+
+model NoteOrder {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  noteId    String
+  note      Note        @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  amount    Int
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
