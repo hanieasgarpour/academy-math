@@ -9,6 +9,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 });
     }
 
+    const type = request.nextUrl.searchParams.get("type") || "course";
+
+    if (type === "note") {
+      const noteOrders = await db.noteOrder.findMany({
+        include: {
+          user: { select: { name: true, email: true } },
+          note: { select: { title: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return NextResponse.json(noteOrders);
+    }
+
     const orders = await db.order.findMany({
       include: {
         user: { select: { name: true, email: true } },

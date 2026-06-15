@@ -4,7 +4,23 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash2, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Trash2, Users, UserPlus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface UserItem {
@@ -20,6 +36,15 @@ interface UserItem {
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+
+  // Form state
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newRole, setNewRole] = useState("ADMIN");
 
   useEffect(() => {
     fetchUsers();
@@ -35,6 +60,51 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function createUser() {
+    if (!newName || !newEmail || !newPassword) {
+      toast.error("لطفاً تمام فیلدهای الزامی را پر کنید");
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newName,
+          email: newEmail,
+          password: newPassword,
+          phone: newPhone || undefined,
+          role: newRole,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("کاربر با موفقیت ایجاد شد");
+        setDialogOpen(false);
+        resetForm();
+        fetchUsers();
+      } else {
+        toast.error(data.error || "خطا در ایجاد کاربر");
+      }
+    } catch {
+      toast.error("خطا در ایجاد کاربر");
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  function resetForm() {
+    setNewName("");
+    setNewEmail("");
+    setNewPassword("");
+    setNewPhone("");
+    setNewRole("ADMIN");
   }
 
   async function deleteUser(id: string) {
@@ -56,7 +126,100 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">مدیریت کاربران</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <Users className="h-6 w-6" />
+          مدیریت کاربران
+        </h1>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <UserPlus className="h-4 w-4" />
+              افزودن کاربر جدید
+            </Button>
+          </DialogTrigger>
+          <DialogContent dir="rtl" className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>افزودن کاربر جدید</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">نام و نام خانوادگی *</Label>
+                <Input
+                  id="name"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="نام کامل"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">ایمیل *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="example@email.com"
+                  dir="ltr"
+                  className="text-left"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">رمز عبور *</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="حداقل ۶ کاراکتر"
+                  dir="ltr"
+                  className="text-left"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">شماره تلفن</Label>
+                <Input
+                  id="phone"
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                  placeholder="09xxxxxxxxx"
+                  dir="ltr"
+                  className="text-left"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>نقش</Label>
+                <Select value={newRole} onValueChange={setNewRole}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADMIN">مدیر</SelectItem>
+                    <SelectItem value="STUDENT">دانش‌آموز</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                className="w-full gap-2"
+                onClick={createUser}
+                disabled={creating}
+              >
+                {creating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    در حال ایجاد...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4" />
+                    ایجاد کاربر
+                  </>
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       <Card>
         <CardContent className="p-0">

@@ -17,6 +17,8 @@ import {
   GraduationCap,
   Clock,
   ArrowLeft,
+  ShoppingCart,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -84,6 +86,8 @@ export default function ProductsPage() {
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [purchasedNotes, setPurchasedNotes] = useState<Set<string>>(new Set());
+  const [buyingNoteId, setBuyingNoteId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -100,21 +104,86 @@ export default function ProductsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function handleNoteDownload(noteId: string) {
+  // Fetch purchased notes for logged-in users
+  useEffect(() => {
+    if (!session) return;
+    fetch("/api/user/note-orders")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const paidIds = data
+            .filter((o: { status: string; noteId: string }) => o.status === "PAID")
+            .map((o: { noteId: string }) => o.noteId);
+          setPurchasedNotes(new Set(paidIds));
+        }
+      })
+      .catch(() => {});
+  }, [session]);
+
+  async function handleNoteAction(note: NoteItem) {
     if (!session) {
       router.push("/login");
       return;
     }
+
+    // Free note - download directly
+    if (note.price === 0) {
+      try {
+        const res = await fetch(`/api/notes/${note.id}/download`);
+        const data = await res.json();
+        if (res.ok && data.url) {
+          window.open(data.url, "_blank");
+        } else {
+          toast.error(data.error || "خطا در دانلود جزوه");
+        }
+      } catch {
+        toast.error("خطا در دانلود جزوه");
+      }
+      return;
+    }
+
+    // Already purchased - download
+    if (purchasedNotes.has(note.id)) {
+      try {
+        const res = await fetch(`/api/notes/${note.id}/download`);
+        const data = await res.json();
+        if (res.ok && data.url) {
+          window.open(data.url, "_blank");
+        } else {
+          toast.error(data.error || "خطا در دانلود جزوه");
+        }
+      } catch {
+        toast.error("خطا در دانلود جزوه");
+      }
+      return;
+    }
+
+    // Paid note - create order and go to checkout
+    setBuyingNoteId(note.id);
     try {
-      const res = await fetch(`/api/notes/${noteId}/download`);
+      const res = await fetch(`/api/notes/${note.id}/order`, { method: "POST" });
       const data = await res.json();
-      if (res.ok) {
-        window.open(data.url, "_blank");
-      } else {
-        toast.error(data.error || "خطا در دانلود جزوه");
+
+      if (res.status === 409 && data.noteOrder) {
+        // Already purchased
+        setPurchasedNotes((prev) => new Set([...prev, note.id]));
+        toast.success("شما قبلاً این جزوه را خریداری کرده‌اید");
+        return;
+      }
+
+      if (!res.ok && res.status !== 200) {
+        toast.error(data.error || "خطا در ایجاد سفارش");
+        return;
+      }
+
+      const noteOrder = data.noteOrder;
+      if (noteOrder) {
+        router.push(`/checkout/notes/${noteOrder.id}`);
       }
     } catch {
-      toast.error("خطا در دانلود جزوه");
+      toast.error("خطا در ایجاد سفارش");
+    } finally {
+      setBuyingNoteId(null);
     }
   }
 
@@ -176,7 +245,6 @@ export default function ProductsPage() {
                         className="group"
                       >
                         <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full">
-                          {/* Thumbnail */}
                           <div className="relative h-44 bg-gradient-to-bl from-orange-100 to-red-50 flex items-center justify-center">
                             <div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center group-hover:scale-110 transition-transform">
                               <PlatformIcon className={`h-8 w-8 ${platform.color}`} />
@@ -224,46 +292,67 @@ export default function ProductsPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {notes.map((note) => (
-                    <Card key={note.id} className="hover:shadow-lg transition-shadow duration-300">
-                      <CardContent className="p-5">
-                        <div className="flex items-start gap-4">
-                          <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                            <FileText className="h-7 w-7 text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-sm mb-1 line-clamp-1">{note.title}</h3>
-                            <div className="flex items-center gap-2 mb-3 flex-wrap">
-                              <Badge variant="outline" className="text-xs">
-                                {gradeMap[note.gradeLevel] || note.gradeLevel}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">
-                                {note.pageCount} صفحه
-                              </span>
+                  {notes.map((note) => {
+                    const isPurchased = purchasedNotes.has(note.id);
+                    const isFree = note.price === 0;
+                    const isBuying = buyingNoteId === note.id;
+
+                    return (
+                      <Card key={note.id} className="hover:shadow-lg transition-shadow duration-300">
+                        <CardContent className="p-5">
+                          <div className="flex items-start gap-4">
+                            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                              <FileText className="h-7 w-7 text-primary" />
                             </div>
-                            {note.description && (
-                              <p className="text-xs text-muted-foreground line-clamp-2 leading-5 mb-3">
-                                {note.description}
-                              </p>
-                            )}
-                            <div className="flex items-center justify-between">
-                              <div className="text-lg font-bold text-primary">
-                                {note.price === 0 ? "رایگان" : `${toToman(note.price)} تومان`}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-sm mb-1 line-clamp-1">{note.title}</h3>
+                              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                                <Badge variant="outline" className="text-xs">
+                                  {gradeMap[note.gradeLevel] || note.gradeLevel}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {note.pageCount} صفحه
+                                </span>
                               </div>
-                              <Button
-                                size="sm"
-                                className="gap-1"
-                                onClick={() => handleNoteDownload(note.id)}
-                              >
-                                <Download className="h-3.5 w-3.5" />
-                                {note.price === 0 ? "دانلود" : "خرید"}
-                              </Button>
+                              {note.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-2 leading-5 mb-3">
+                                  {note.description}
+                                </p>
+                              )}
+                              <div className="flex items-center justify-between">
+                                <div className="text-lg font-bold text-primary">
+                                  {isFree ? "رایگان" : `${toToman(note.price)} تومان`}
+                                </div>
+                                <Button
+                                  size="sm"
+                                  className="gap-1"
+                                  onClick={() => handleNoteAction(note)}
+                                  disabled={isBuying}
+                                >
+                                  {isBuying ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : isPurchased ? (
+                                    <Download className="h-3.5 w-3.5" />
+                                  ) : isFree ? (
+                                    <Download className="h-3.5 w-3.5" />
+                                  ) : (
+                                    <ShoppingCart className="h-3.5 w-3.5" />
+                                  )}
+                                  {isBuying
+                                    ? "لطفاً صبر کنید..."
+                                    : isPurchased
+                                    ? "دانلود"
+                                    : isFree
+                                    ? "دانلود"
+                                    : "خرید"}
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>

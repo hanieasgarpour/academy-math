@@ -13,10 +13,12 @@ import {
   GraduationCap,
   BookOpen,
   Clock,
-  Users,
   ArrowLeft,
   LayoutDashboard,
+  FileText,
+  Download,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const levelMap: Record<string, { label: string; color: string }> = {
   BEGINNER: { label: "مبتدی", color: "bg-green-100 text-green-700" },
@@ -29,6 +31,15 @@ const statusMap: Record<string, { label: string; color: string }> = {
   PAID: { label: "پرداخت شده", color: "bg-green-100 text-green-700" },
   FAILED: { label: "ناموفق", color: "bg-red-100 text-red-700" },
   CANCELLED: { label: "لغو شده", color: "bg-gray-100 text-gray-700" },
+};
+
+const gradeMap: Record<string, string> = {
+  GRADE_7: "پایه هفتم",
+  GRADE_8: "پایه هشتم",
+  GRADE_9: "پایه نهم",
+  GRADE_10: "پایه دهم",
+  GRADE_11: "پایه یازدهم",
+  GRADE_12: "پایه دوازدهم",
 };
 
 interface Enrollment {
@@ -50,6 +61,21 @@ interface Order {
   course: { title: string };
 }
 
+interface NoteOrder {
+  id: string;
+  noteId: string;
+  amount: number;
+  status: string;
+  createdAt: string;
+  note: {
+    id: string;
+    title: string;
+    gradeLevel: string;
+    pageCount: number;
+    price: number;
+  };
+}
+
 function toToman(rials: number): string {
   return (rials / 10).toLocaleString("fa-IR");
 }
@@ -59,6 +85,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [noteOrders, setNoteOrders] = useState<NoteOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,14 +99,30 @@ export default function DashboardPage() {
     Promise.all([
       fetch("/api/user/enrollments").then((r) => r.json()),
       fetch("/api/user/orders").then((r) => r.json()),
+      fetch("/api/user/note-orders").then((r) => r.json()),
     ])
-      .then(([enrollmentsData, ordersData]) => {
+      .then(([enrollmentsData, ordersData, noteOrdersData]) => {
         setEnrollments(enrollmentsData);
         setOrders(ordersData);
+        setNoteOrders(Array.isArray(noteOrdersData) ? noteOrdersData : []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [status, router]);
+
+  async function handleNoteDownload(noteId: string) {
+    try {
+      const res = await fetch(`/api/notes/${noteId}/download`);
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.open(data.url, "_blank");
+      } else {
+        toast.error(data.error || "خطا در دانلود جزوه");
+      }
+    } catch {
+      toast.error("خطا در دانلود جزوه");
+    }
+  }
 
   if (status === "loading" || loading) {
     return (
@@ -100,6 +143,8 @@ export default function DashboardPage() {
     );
   }
 
+  const paidNoteOrders = noteOrders.filter((o) => o.status === "PAID");
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -111,7 +156,7 @@ export default function DashboardPage() {
               <h1 className="text-2xl font-bold">داشبورد</h1>
             </div>
             <p className="text-muted-foreground">
-              سلام {session?.user?.name}! خوش آمدید 👋
+              سلام {session?.user?.name}! خوش آمدید
             </p>
           </div>
         </section>
@@ -176,6 +221,63 @@ export default function DashboardPage() {
                     </Card>
                   );
                 })}
+              </div>
+            )}
+          </div>
+
+          {/* Purchased Notes */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">جزوات خریداری شده</h2>
+            {paidNoteOrders.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-muted-foreground mb-4">
+                    هنوز جزوه‌ای خریداری نکرده‌اید
+                  </p>
+                  <Link href="/products">
+                    <Button className="gap-2">
+                      مشاهده جزوات
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {paidNoteOrders.map((noteOrder) => (
+                  <Card
+                    key={noteOrder.id}
+                    className="hover:shadow-md transition-shadow"
+                  >
+                    <CardContent className="p-5">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <FileText className="h-4 w-4 text-primary" />
+                          </div>
+                          <h3 className="font-bold text-sm line-clamp-1">
+                            {noteOrder.note.title}
+                          </h3>
+                        </div>
+                        <Badge variant="outline" className="text-xs shrink-0">
+                          {gradeMap[noteOrder.note.gradeLevel] || noteOrder.note.gradeLevel}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground mb-3">
+                        {noteOrder.note.pageCount} صفحه
+                      </div>
+                      <Button
+                        size="sm"
+                        className="w-full gap-1"
+                        onClick={() => handleNoteDownload(noteOrder.noteId)}
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        دانلود جزوه
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             )}
           </div>
