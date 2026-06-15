@@ -30,7 +30,7 @@ interface UserItem {
   phone: string | null;
   role: string;
   createdAt: string;
-  _count: { enrollments: number; orders: number };
+  _count: { enrollments: number; orders: number; noteOrders: number };
 }
 
 export default function AdminUsersPage() {
@@ -241,6 +241,7 @@ export default function AdminUsersPage() {
                     <th className="text-right py-3 px-4 font-medium">تلفن</th>
                     <th className="text-right py-3 px-4 font-medium">نقش</th>
                     <th className="text-right py-3 px-4 font-medium">دوره‌ها</th>
+                    <th className="text-right py-3 px-4 font-medium">جزوه‌ها</th>
                     <th className="text-right py-3 px-4 font-medium">عملیات</th>
                   </tr>
                 </thead>
@@ -266,6 +267,9 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="py-3 px-4">
                         {user._count.enrollments}
+                      </td>
+                      <td className="py-3 px-4">
+                        {user._count.noteOrders}
                       </td>
                       <td className="py-3 px-4">
                         {user.role !== "ADMIN" && (

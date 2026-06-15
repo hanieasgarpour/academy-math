@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     const users = await db.user.findMany({
       include: {
-        _count: { select: { enrollments: true, orders: true } },
+        _count: { select: { enrollments: true, orders: true, noteOrders: true } },
       },
       orderBy: { createdAt: "desc" },
     });
