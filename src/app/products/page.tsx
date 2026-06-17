@@ -162,7 +162,7 @@ export default function ProductsPage() {
     setBuyingNoteId(note.id);
     try {
       const res = await fetch(`/api/notes/${note.id}/order`, { method: "POST" });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (res.status === 409 && data.noteOrder) {
         // Already purchased
@@ -172,6 +172,7 @@ export default function ProductsPage() {
       }
 
       if (!res.ok && res.status !== 200) {
+        // Show the actual API error message so the user can see what went wrong
         toast.error(data.error || "خطا در ایجاد سفارش");
         return;
       }
@@ -179,9 +180,12 @@ export default function ProductsPage() {
       const noteOrder = data.noteOrder;
       if (noteOrder) {
         router.push(`/checkout/notes/${noteOrder.id}`);
+      } else {
+        toast.error("پاسخ نامعتبر از سرور");
       }
-    } catch {
-      toast.error("خطا در ایجاد سفارش");
+    } catch (err) {
+      console.error("Note buy error:", err);
+      toast.error("خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.");
     } finally {
       setBuyingNoteId(null);
     }

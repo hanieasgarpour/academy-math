@@ -9,9 +9,11 @@ export async function GET(
   try {
     const { noteOrderId } = await params;
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    if (!token) {
+    if (!token || !token.id) {
       return NextResponse.json({ error: "ابتدا وارد شوید" }, { status: 401 });
     }
+
+    const userId = token.id as string;
 
     const noteOrder = await db.noteOrder.findUnique({
       where: { id: noteOrderId },
@@ -34,13 +36,25 @@ export async function GET(
       return NextResponse.json({ error: "سفارش یافت نشد" }, { status: 404 });
     }
 
-    if (noteOrder.userId !== token.id) {
+    if (noteOrder.userId !== userId) {
       return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 403 });
     }
 
     return NextResponse.json(noteOrder);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error fetching note order:", error);
+
+    const prismaError = error as { code?: string };
+    if (prismaError.code === "P2021" || prismaError.code === "P2022") {
+      return NextResponse.json(
+        {
+          error:
+            "ساختار دیتابیس محلی قدیمی است. لطفاً دستور `npx prisma db push` را اجرا کنید.",
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ error: "خطا در دریافت سفارش" }, { status: 500 });
   }
 }

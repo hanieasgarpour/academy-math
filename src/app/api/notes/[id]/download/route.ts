@@ -9,10 +9,12 @@ export async function GET(
   try {
     const { id } = await params;
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    
-    if (!token) {
+
+    if (!token || !token.id) {
       return NextResponse.json({ error: "ابتدا وارد شوید" }, { status: 401 });
     }
+
+    const userId = token.id as string;
 
     const note = await db.note.findUnique({ where: { id } });
     if (!note) {
@@ -27,7 +29,7 @@ export async function GET(
     // Check if user has purchased this note
     const order = await db.noteOrder.findFirst({
       where: {
-        userId: token.id as string,
+        userId,
         noteId: id,
         status: "PAID",
       },
@@ -38,8 +40,20 @@ export async function GET(
     }
 
     return NextResponse.json({ url: note.fileUrl, fileName: note.fileName });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error downloading note:", error);
+
+    const prismaError = error as { code?: string };
+    if (prismaError.code === "P2021" || prismaError.code === "P2022") {
+      return NextResponse.json(
+        {
+          error:
+            "ساختار دیتابیس محلی قدیمی است. لطفاً دستور `npx prisma db push` را اجرا کنید.",
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ error: "خطا در دانلود جزوه" }, { status: 500 });
   }
 }

@@ -9,9 +9,16 @@ export async function POST(
   try {
     const { id } = await params;
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    if (!token) {
-      return NextResponse.json({ error: "ابتدا وارد شوید" }, { status: 401 });
+
+    // Defensive check: ensure both token AND token.id exist
+    if (!token || !token.id) {
+      return NextResponse.json(
+        { error: "ابتدا وارد شوید" },
+        { status: 401 }
+      );
     }
+
+    const userId = token.id as string;
 
     const note = await db.note.findUnique({ where: { id } });
     if (!note) {
@@ -22,10 +29,10 @@ export async function POST(
       return NextResponse.json({ error: "این جزوه در دسترس نیست" }, { status: 400 });
     }
 
-    // Check if already purchased
+    // Check if already purchased (PAID order)
     const existingOrder = await db.noteOrder.findFirst({
       where: {
-        userId: token.id as string,
+        userId,
         noteId: id,
         status: "PAID",
       },
@@ -33,7 +40,10 @@ export async function POST(
 
     if (existingOrder) {
       return NextResponse.json(
-        { error: "شما قبلاً این جزوه را خریداری کرده‌اید", noteOrder: existingOrder },
+        {
+          error: "شما قبلاً این جزوه را خریداری کرده‌اید",
+          noteOrder: existingOrder,
+        },
         { status: 409 }
       );
     }
@@ -41,7 +51,7 @@ export async function POST(
     // Check for pending order
     const pendingOrder = await db.noteOrder.findFirst({
       where: {
-        userId: token.id as string,
+        userId,
         noteId: id,
         status: "PENDING",
       },
@@ -54,7 +64,7 @@ export async function POST(
     // Create note order
     const noteOrder = await db.noteOrder.create({
       data: {
-        userId: token.id as string,
+        userId,
         noteId: id,
         amount: note.price,
         status: "PENDING",
@@ -62,8 +72,33 @@ export async function POST(
     });
 
     return NextResponse.json({ noteOrder }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error creating note order:", error);
+
+    // Detect "table does not exist" Prisma error (P2021)
+    // This happens when the local SQLite DB schema is out of sync with schema.prisma
+    const prismaError = error as { code?: string; message?: string };
+    if (prismaError.code === "P2021") {
+      return NextResponse.json(
+        {
+          error:
+            "جدول NoteOrder در دیتابیس محلی وجود ندارد. لطفاً دستور `npx prisma db push` را اجرا کنید تا ساختار دیتابیس با schema هماهنگ شود.",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Detect "column does not exist" Prisma error (P2022)
+    if (prismaError.code === "P2022") {
+      return NextResponse.json(
+        {
+          error:
+            "ساختار دیتابیس محلی قدیمی است. لطفاً دستور `npx prisma db push` را اجرا کنید.",
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ error: "خطا در ایجاد سفارش" }, { status: 500 });
   }
 }
