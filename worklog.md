@@ -81,3 +81,42 @@ Stage Summary:
 - v1.2.4 tag pushed to GitHub
 - User should: git pull, then if error persists, run `npx prisma db push`
   to sync their local SQLite DB schema with the latest schema.prisma
+
+---
+Task ID: 6
+Agent: main-agent
+Task: Add admin password reset feature + fix homepage crash on db.course.findMany (v1.2.5)
+
+Work Log:
+- Verified user password change in profile page already exists since v1.2.2
+  (currentPassword + newPassword + confirmPassword card with bcrypt verification)
+- Created new API: src/app/api/admin/users/[id]/reset-password/route.ts
+  - POST endpoint, admin-only (token.role === "ADMIN")
+  - Validates newPassword min length 6 with zod
+  - Prevents admin from resetting own password (must use profile flow)
+  - Bcrypt-hashes new password before saving
+  - Defensive Prisma P2021/P2022 error handling
+- Updated src/app/admin/users/page.tsx:
+  - Added resetUser / resetPasswordValue / resetting state
+  - Added openResetDialog, closeResetDialog, resetPassword helper functions
+  - Added KeyRound icon button next to delete button in actions column
+  - Added reset password dialog showing user info + new password input
+  - Button disabled until password length >= 6
+- Fixed src/app/page.tsx homepage crash:
+  - Wrapped all db queries (course.findMany, user.count, course.count, lesson.count)
+    in a single try-catch with empty-state fallback
+  - If Prisma client is missing or DB schema is out of sync, homepage renders
+    with empty courses array and zero stats instead of throwing
+  - Added empty state UI for featured courses section
+- Bumped package.json version to 1.2.5
+- Committed as 8bec252, tagged v1.2.5, pushed to GitHub
+
+Stage Summary:
+- Admin can now reset any user's password from the admin users page
+- Homepage no longer crashes when Prisma has issues (graceful empty state)
+- v1.2.5 tag pushed to GitHub
+- User should: git pull origin main
+- If homepage was crashing because Prisma client wasn't generated:
+    npx prisma generate
+  If crashing because local DB schema is out of sync:
+    npx prisma db push
