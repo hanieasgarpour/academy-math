@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash2, Users, UserPlus, Loader2 } from "lucide-react";
+import { Trash2, Users, UserPlus, Loader2, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
 interface UserItem {
@@ -39,12 +39,17 @@ export default function AdminUsersPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  // Form state
+  // Form state (create user)
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newRole, setNewRole] = useState("ADMIN");
+
+  // Reset password dialog state
+  const [resetUser, setResetUser] = useState<UserItem | null>(null);
+  const [resetPasswordValue, setResetPasswordValue] = useState("");
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -121,6 +126,47 @@ export default function AdminUsersPage() {
       }
     } catch {
       toast.error("خطا در حذف کاربر");
+    }
+  }
+
+  function openResetDialog(user: UserItem) {
+    setResetUser(user);
+    setResetPasswordValue("");
+  }
+
+  function closeResetDialog() {
+    setResetUser(null);
+    setResetPasswordValue("");
+  }
+
+  async function resetPassword() {
+    if (!resetUser) return;
+    if (resetPasswordValue.length < 6) {
+      toast.error("رمز عبور جدید باید حداقل ۶ کاراکتر باشد");
+      return;
+    }
+
+    setResetting(true);
+    try {
+      const res = await fetch(
+        `/api/admin/users/${resetUser.id}/reset-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newPassword: resetPasswordValue }),
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || "رمز عبور با موفقیت تغییر کرد");
+        closeResetDialog();
+      } else {
+        toast.error(data.error || "خطا در تغییر رمز عبور");
+      }
+    } catch {
+      toast.error("خطا در تغییر رمز عبور");
+    } finally {
+      setResetting(false);
     }
   }
 
@@ -221,6 +267,81 @@ export default function AdminUsersPage() {
         </Dialog>
       </div>
 
+      {/* Reset Password Dialog */}
+      <Dialog
+        open={resetUser !== null}
+        onOpenChange={(open) => {
+          if (!open) closeResetDialog();
+        }}
+      >
+        <DialogContent dir="rtl" className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-primary" />
+              تغییر رمز عبور کاربر
+            </DialogTitle>
+          </DialogHeader>
+          {resetUser && (
+            <div className="space-y-4 py-2">
+              <div className="text-sm bg-muted/40 rounded-lg p-3 space-y-1">
+                <div>
+                  <span className="text-muted-foreground">نام: </span>
+                  <span className="font-medium">{resetUser.name}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">ایمیل: </span>
+                  <span className="font-medium" dir="ltr">{resetUser.email}</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resetPassword">رمز عبور جدید</Label>
+                <Input
+                  id="resetPassword"
+                  type="password"
+                  value={resetPasswordValue}
+                  onChange={(e) => setResetPasswordValue(e.target.value)}
+                  placeholder="حداقل ۶ کاراکتر"
+                  dir="ltr"
+                  className="text-left"
+                  autoFocus
+                />
+                <p className="text-xs text-muted-foreground">
+                  این رمز جایگزین رمز قبلی کاربر می‌شود. کاربر می‌تواند بعداً از
+                  صفحه پروفایل رمز خود را دوباره تغییر دهد.
+                </p>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={closeResetDialog}
+                  disabled={resetting}
+                >
+                  انصراف
+                </Button>
+                <Button
+                  className="flex-1 gap-2"
+                  onClick={resetPassword}
+                  disabled={resetting || resetPasswordValue.length < 6}
+                >
+                  {resetting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      در حال تغییر...
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound className="h-4 w-4" />
+                      تغییر رمز
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <Card>
         <CardContent className="p-0">
           {loading ? (
@@ -272,16 +393,27 @@ export default function AdminUsersPage() {
                         {user._count.noteOrders}
                       </td>
                       <td className="py-3 px-4">
-                        {user.role !== "ADMIN" && (
+                        <div className="flex items-center gap-1">
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={() => deleteUser(user.id)}
-                            className="text-destructive"
+                            onClick={() => openResetDialog(user)}
+                            title="ریست رمز عبور"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <KeyRound className="h-4 w-4" />
                           </Button>
-                        )}
+                          {user.role !== "ADMIN" && (
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => deleteUser(user.id)}
+                              className="text-destructive"
+                              title="حذف کاربر"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

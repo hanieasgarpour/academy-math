@@ -32,22 +32,41 @@ function toToman(rials: number): string {
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const courses = await db.course.findMany({
-    where: { published: true },
-    include: {
-      _count: {
-        select: { lessons: true, enrollments: true },
-      },
-    },
-    take: 6,
-    orderBy: { createdAt: "desc" },
-  });
+  // Defensive DB calls: if Prisma client isn't generated or DB schema is out of
+  // sync, we still render the homepage with empty state instead of crashing.
+  let courses: Array<{
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    level: string;
+    duration: string | null;
+    _count: { lessons: number; enrollments: number };
+  }> = [];
+  const stats = { students: 0, courses: 0, lessons: 0 };
 
-  const stats = {
-    students: await db.user.count({ where: { role: "STUDENT" } }),
-    courses: await db.course.count({ where: { published: true } }),
-    lessons: await db.lesson.count(),
-  };
+  try {
+    courses = await db.course.findMany({
+      where: { published: true },
+      include: {
+        _count: {
+          select: { lessons: true, enrollments: true },
+        },
+      },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    stats.students = await db.user.count({ where: { role: "STUDENT" } });
+    stats.courses = await db.course.count({ where: { published: true } });
+    stats.lessons = await db.lesson.count();
+  } catch (error) {
+    // Log the error so the developer can see it in the server console, but
+    // don't crash the homepage. This typically happens when:
+    //  - Prisma client isn't generated (`npx prisma generate`)
+    //  - Local SQLite DB schema is out of sync (`npx prisma db push`)
+    console.error("Homepage DB error (non-fatal, rendering empty state):", error);
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -138,60 +157,70 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => {
-              const level = levelMap[course.level] || levelMap.BEGINNER;
-              return (
-                <Card
-                  key={course.id}
-                  className="group overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                >
-                  {/* Thumbnail placeholder */}
-                  <div className="relative h-48 bg-gradient-to-bl from-orange-100 to-orange-50 flex items-center justify-center">
-                    <GraduationCap className="h-16 w-16 text-primary/30" />
-                    <div className="absolute top-3 right-3">
-                      <Badge className={level.color}>{level.label}</Badge>
-                    </div>
-                  </div>
-                  <CardContent className="p-5">
-                    <h3 className="font-bold text-base mb-2 line-clamp-1">
-                      {course.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-6">
-                      {course.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
-                        {course.duration}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <BookOpen className="h-3.5 w-3.5" />
-                        {course._count.lessons} درس
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3.5 w-3.5" />
-                        {course._count.enrollments} نفر
+          {courses.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <GraduationCap className="h-16 w-16 text-muted-foreground/30 mx-auto mb-3" />
+              <p>در حال حاضر دوره‌ای منتشر نشده است.</p>
+              <p className="text-sm mt-1">
+                اگر مدیر هستید، از پنل مدیریت دوره جدید اضافه کنید.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {courses.map((course) => {
+                const level = levelMap[course.level] || levelMap.BEGINNER;
+                return (
+                  <Card
+                    key={course.id}
+                    className="group overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                  >
+                    {/* Thumbnail placeholder */}
+                    <div className="relative h-48 bg-gradient-to-bl from-orange-100 to-orange-50 flex items-center justify-center">
+                      <GraduationCap className="h-16 w-16 text-primary/30" />
+                      <div className="absolute top-3 right-3">
+                        <Badge className={level.color}>{level.label}</Badge>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="text-lg font-bold text-primary">
-                        {course.price === 0
-                          ? "رایگان"
-                          : `${toToman(course.price)} تومان`}
+                    <CardContent className="p-5">
+                      <h3 className="font-bold text-base mb-2 line-clamp-1">
+                        {course.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-6">
+                        {course.description}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5" />
+                          {course.duration}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          {course._count.lessons} درس
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-3.5 w-3.5" />
+                          {course._count.enrollments} نفر
+                        </div>
                       </div>
-                      <Link href={`/courses/${course.id}`}>
-                        <Button size="sm" variant="outline" className="gap-1">
-                          مشاهده
-                          <ArrowLeft className="h-3.5 w-3.5" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-lg font-bold text-primary">
+                          {course.price === 0
+                            ? "رایگان"
+                            : `${toToman(course.price)} تومان`}
+                        </div>
+                        <Link href={`/courses/${course.id}`}>
+                          <Button size="sm" variant="outline" className="gap-1">
+                            مشاهده
+                            <ArrowLeft className="h-3.5 w-3.5" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
 
           <div className="text-center mt-10">
             <Link href="/courses">
